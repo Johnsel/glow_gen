@@ -1,7 +1,7 @@
 void drawRaster() {
   pushStyle();
-  fill(0,0,0);
-  stroke(c2);
+  noFill();
+  stroke(0, 102, 153);
   
   pushMatrix();
   translate(20, 21);  

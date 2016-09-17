@@ -1,20 +1,24 @@
+import AULib.*;
+
 /*
  * 
  */
-
-int rectWidth = 9;
-int rectHeight = 9;
-int x;
-int y;
 
 int numTripods = 40;
 int numTubes = numTripods * 3;
 int numLEDsPerTube = 56;
 
+int rectWidth = 9;
+int rectHeight = 9;
+int tubeLength = rectWidth * numLEDsPerTube;
+
+int x;
+int y;
+
 color b1, b2, c1, c2;
    
 void setup() {
-  size(1600, 900, P2D);
+  size(800, 450, P2D);
   background(0);
   noStroke();
     
@@ -25,8 +29,11 @@ void setup() {
 
 void draw() {
      // def: (int x, int y, float w, float h, color c1, color c2, int tubeNumber, int tripodNumber)
-  setGradient(x, y, numLEDsPerTube * rectWidth, rectHeight, c2, c1, 2, 10); // draws a rectangle with gradient on position x, y, with width ... height, from color c2 to color c1, for tube 1 of tripod 1
-
+  //setGradient(x, y, numLEDsPerTube * rectWidth, rectHeight, c2, c1, 2, 10);
+  
+  explosionCenter(c1, c2, 1, 1);
+  
+  drawRaster();
   /* the idea is that something in the draw function creates a rectangle coming in from the left, or right. So with movement
   the setGradient feature is made to give an idea how this can be done for each tube.
   */
