@@ -17,7 +17,15 @@ int y;
 
 color b1, b2, c1, c2;
 
+int activeTubes = 20;
+
+int activeTube[] = new int[activeTubes];      // this should be made dynamic in length, can only handle max 20 interactive tubes now
+int numIndex = 0;
 int touchState[] = new int[numTubes];
+int  startTime[] = new int[numTubes];
+int[] nums = new int[10];
+
+boolean alreadyReceived = false; // only needed for key-triggered simulation stuff
 
 Lighteffect lighteffect;
 
@@ -27,6 +35,7 @@ void setup() {
   size(800, 450, P2D);
   background(0);
   noStroke();
+  font = createFont("Arial Bold",48);
   
   lighteffect = new Lighteffect();
   
@@ -41,7 +50,9 @@ void draw() {
      // def: (int x, int y, float w, float h, color c1, color c2, int tubeNumber, int tripodNumber)
   //setGradient(x, y, numLEDsPerTube * rectWidth, rectHeight, c2, c1, 2, 10);
   
-  lighteffect.update(6);
+  lighteffect.update();
+  
+  ShowFrameRate();
   
   //drawRaster();
   
@@ -56,16 +67,23 @@ void keyPressed() {
  * maybe we can build in something to select a certain tube we want to give input to using the arrows up and down
 */
   int receivedFromTube = 6;
-
-  touchState[receivedFromTube] = 0;
-  if (key > '0' && key < '4') {
-    touchState[receivedFromTube] = key - 48;
-    //println(touchState[receivedFromTube]);
-  } else {
-    touchState[receivedFromTube] = 0;
-  }
   
-  println(keyPressed);
+  if (alreadyReceived == false) {
+    if (key > '0' && key < '4') {
+      touchState[receivedFromTube] = key - 48;   //log touchState of tube
+      startTime[receivedFromTube] = millis();    //log start time of tube
+
+      for (int i = 0; i < activeTubes - 1; i ++) {
+        activeTube[i + 1] = activeTube[i];      //make room for new active tube this is not working correctly but will fix that later
+      }
+      
+      activeTube[0] = receivedFromTube;         //add tube to activeTube[] array 
+    } 
+    else {
+      touchState[receivedFromTube] = 0;
+    }
+    alreadyReceived = true;
+  }
 }
 
 void keyReleased() {
@@ -73,5 +91,6 @@ void keyReleased() {
   int receivedFromTube = 6;
   
   touchState[receivedFromTube] = 0;
-  //println(touchState[receivedFromTube]);
+ 
+  alreadyReceived = false;
 }

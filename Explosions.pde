@@ -6,6 +6,9 @@ class Explosions {
   }
   
   void update(int position, int tubeNumber, int tripodNumber) {
+    if (position == 0) {
+      lighteffect.fadeToBlackBy(10);
+    }
     if (position == 1) {
       explosionCenter(c1, c2, tubeNumber, tripodNumber);
     }

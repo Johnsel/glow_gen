@@ -1,3 +1,8 @@
+/* The Lighteffect class is the mediator of the entire code
+   lighteffect.update is the only function that is CONSTANTLY running
+   .update checks the tubes that are active, decides what light-effect they should show and exectues the corrosponding functions
+*/
+
 private int tube;
 private int tubeNumber;
 private int tripodNumber;
@@ -8,21 +13,30 @@ class Lighteffect {
     
   }
   
-  void update(int tube) {
-    //position = touchState[tube];
-    position = 1;
-    tubeNumber = tube % 3;
-    tripodNumber = tube / 3;
+  void update() {
     
-    explosions.update(position, tubeNumber, tripodNumber);
-    
-    if (tube < numTubes - 1) {
-      tube ++;
+    for (int i = 0; i < activeTubes; i ++) { // refresh all active tubes every frame
+      int tube = activeTube[i];
+      position = touchState[tube];
+      tubeNumber = tube % 3;
+      tripodNumber = tube / 3;
+      
+      // now simply run explosions, but deciding functions should be added here
+      explosions.update(position, tubeNumber, tripodNumber);
     }
-    else { 
-      tube = 0;
-    }
+  }
+  
+  void deactivateTube(int tubeToDeactivate) {
+    // maybe this can be implemented in the for-loop in lighteffect.update
+    // this will eliminate the first for-loop and if-statement
     
+    for (int i = 0; i < activeTubes; i ++) {
+      if (activeTube[i] == tubeToDeactivate) {
+        for (int j = i; j < activeTubes - 1; j ++) { 
+          activeTube[j] = activeTube[j + 1];      //remove active tube from activeTube[] array
+        }
+      }
+    }
   }
   
   void fadeToBlackBy(int fadeAmount) {
@@ -32,20 +46,5 @@ class Lighteffect {
     rect(-10, 0, tubeLength + 20, rectHeight * 1.5);
     
     popStyle();
-  }
-  
-  void setGradient(int x, int y, float w, float h, color c1, color c2, int tubeNumber, int tripodNumber) {
-    pushMatrix();
-    translate((tubeNumber - 1) * (numLEDsPerTube * rectWidth) + (tubeNumber * 20), tripodNumber * 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber
-    
-    noFill();
-  
-    for (int i = x; i <= x+w; i++) {
-      float inter = map(i, x, x+w, 0, 1);
-      color c = lerpColor(c1, b1, inter);
-      stroke(c);
-      line(i, y, i, y+h);
-    }
-    popMatrix();
   }
 }

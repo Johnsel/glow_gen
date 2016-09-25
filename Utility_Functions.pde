@@ -1,3 +1,5 @@
+// utility functions like drawRaster and showFrameRate
+
 void drawRaster() {
   pushStyle();
   noFill();
@@ -33,4 +35,17 @@ void drawRaster() {
   y = 0;
   popMatrix();
   popStyle();
+}
+
+
+  PFont font;
+
+void ShowFrameRate() {
+  fill(0);
+  rect(0,0,24,16);
+  // oversampled fonts tend to look better
+  textFont(font,16);
+  // gray int frameRate display:
+  fill(200);
+  text(int(frameRate),5,16);
 }
