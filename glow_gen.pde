@@ -17,19 +17,9 @@ int y;
 
 color b1, b2, c1, c2;
 
-int activeTubes = 20;
-
-int activeTube[] = new int[activeTubes];      // this should be made dynamic in length, can only handle max 20 interactive tubes now
-int numIndex = 0;
-int touchState[] = new int[numTubes];
-int  startTime[] = new int[numTubes];
-int[] nums = new int[10];
-
 boolean alreadyReceived = false; // only needed for key-triggered simulation stuff
 
-Lighteffect lighteffect;
-
-Explosions explosions;
+Tube[] tubes = new Tube[numTubes];
    
 void setup() {
   size(800, 450, P2D);
@@ -37,10 +27,10 @@ void setup() {
   noStroke();
   font = createFont("Arial Bold",48);
   
-  lighteffect = new Lighteffect();
-  
-  explosions = new Explosions();
-    
+  for (int i=0; i< numTubes; i++) {
+    tubes[i] = new Tube(i);
+  }
+      
   defineColors(); // we can use defineColors later on to change colors (periodically or with input)
   
   drawRaster(); // drawRaster helps us with the LED mapping in ELM
@@ -50,7 +40,9 @@ void draw() {
      // def: (int x, int y, float w, float h, color c1, color c2, int tubeNumber, int tripodNumber)
   //setGradient(x, y, numLEDsPerTube * rectWidth, rectHeight, c2, c1, 2, 10);
   
-  lighteffect.update();
+  for (int i=0; i<numTubes; i++) {
+    tubes[i].update();
+  }
   
   ShowFrameRate();
   
@@ -66,31 +58,28 @@ void keyPressed() {
  * so if we type in 1, 2, or 3 (which is sensor 1, 2, or 3 of one tube) something will happen with the corrosponding tube
  * maybe we can build in something to select a certain tube we want to give input to using the arrows up and down
 */
-  int receivedFromTube = 6;
+  int sendingTube = 6;
   
   if (alreadyReceived == false) {
     if (key > '0' && key < '4') {
-      touchState[receivedFromTube] = key - 48;   //log touchState of tube
-      startTime[receivedFromTube] = millis();    //log start time of tube <----- when no light effect should be shown, set to value -1
-
-      for (int i = 0; i < activeTubes - 1; i ++) {
-        activeTube[i + 1] = activeTube[i];      //add.toarray
-      }
       
-      activeTube[0] = receivedFromTube;         //add tube to activeTube[] array 
-    } 
-    else {
-      touchState[receivedFromTube] = 0;
+      int touchLocation = key - 48;
+      
+      println("sending touched to tube on direction " + touchLocation);
+      
+      tubes[sendingTube].isTouched(touchLocation);
     }
     alreadyReceived = true;
   }
 }
 
 void keyReleased() {
-  // this simulates receiving sensordata "0" zero, indicating that the touch has stopped.
-  int receivedFromTube = 6;
-  
-  touchState[receivedFromTube] = 0;
+  int sendingTube = 6;
  
+  // this simulates receiving sensordata "0" zero, indicating that the touch has stopped.
   alreadyReceived = false;
+  
+  println("sending untouched to tube");
+  
+  tubes[sendingTube].isUntouched();
 }
