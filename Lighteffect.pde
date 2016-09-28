@@ -14,15 +14,18 @@ class Lighteffect {
   }
   
   void update() {
-    
-    for (int i = 0; i < activeTubes; i ++) { // refresh all active tubes every frame
-      int tube = activeTube[i];
-      position = touchState[tube];
-      tubeNumber = tube % 3;
-      tripodNumber = tube / 3;
-      
-      // now simply run explosions, but deciding functions should be added here
-      explosions.update(position, tubeNumber, tripodNumber);
+    int currentTime = millis(); 
+    for (int i = 0; i < numTubes; i ++) { // refresh all active tubes every frame
+      int startTimeNow = startTime[i];
+      if (startTimeNow > 0 && currentTime - startTimeNow > cycleTime) {
+        
+        int tube = activeTube[i];
+        position = touchState[tube];
+        tubeNumber = tube % 3;
+        tripodNumber = tube / 3;
+        
+        // now simply run explosions, but deciding functions should be added here              array.append
+        explosions.update(position, tubeNumber, tripodNumber);
     }
   }
   

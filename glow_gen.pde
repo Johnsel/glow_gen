@@ -71,10 +71,10 @@ void keyPressed() {
   if (alreadyReceived == false) {
     if (key > '0' && key < '4') {
       touchState[receivedFromTube] = key - 48;   //log touchState of tube
-      startTime[receivedFromTube] = millis();    //log start time of tube
+      startTime[receivedFromTube] = millis();    //log start time of tube <----- when no light effect should be shown, set to value -1
 
       for (int i = 0; i < activeTubes - 1; i ++) {
-        activeTube[i + 1] = activeTube[i];      //make room for new active tube this is not working correctly but will fix that later
+        activeTube[i + 1] = activeTube[i];      //add.toarray
       }
       
       activeTube[0] = receivedFromTube;         //add tube to activeTube[] array 
