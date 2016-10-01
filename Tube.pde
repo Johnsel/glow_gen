@@ -76,11 +76,15 @@ class Tube {
   }
   
   void fadeToBlackBy(int fadeAmount) {
+    pushMatrix();
+    translate(tubeModulus * (numLEDsPerTube * rectWidth) + (tubeModulus * 20 + 20), tripodNumber * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber
+
     pushStyle();
     fill(b1,fadeAmount); // gray, alpha
     
     rect(-10, 0, tubeLength + 20, rectHeight * 1.5);
     
     popStyle();
+    popMatrix();
   }
 }
