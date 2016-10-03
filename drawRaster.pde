@@ -1,5 +1,6 @@
 void drawRaster() {
   pushStyle();
+  //background(0);
   noFill();
   stroke(0, 102, 153);
   

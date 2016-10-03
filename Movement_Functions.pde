@@ -18,7 +18,7 @@ void explosionCenter(color c1, color c2, int tubeNumber, int tripodNumber) {
   pushMatrix();
   translate((tubeNumber - 1) * (numLEDsPerTube * rectWidth) + (tubeNumber * 20), tripodNumber * 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber
 
-  float cycleLength = 30;    // total frames for a round trip
+  float cycleLength = 60;    // total frames for a round trip
   float t = ((frameCount-1)*1./cycleLength) % 1.;
   float a = 0.7;
   float v = AULib.wave(AULib.WAVE_BIAS, t, a);
