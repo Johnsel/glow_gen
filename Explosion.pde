@@ -33,22 +33,20 @@ class Explosion {
     }
     if (this.touchLocation == 1) {
       println("testtl1");
-      explosionCenter(c1, c2, this.tubeNumber, this.tripodNumber);
+      explosionCenter(c1, c2, this.tubeModulus, this.tripodNumber);
     }
     if (this.touchLocation == 2) {
-      explosionCenter(c1, c2, this.tubeNumber, this.tripodNumber);
+      explosionCenter(c1, c2, this.tubeModulus, this.tripodNumber);
     }
     if (this.touchLocation == 3) {
-      explosionCenter(c1, c2, this.tubeNumber, this.tripodNumber);
+      explosionCenter(c1, c2, this.tubeModulus, this.tripodNumber);
     }
   }
   
-  void explosionCenter(color c1, color c2, int tubeNumber, int tripodNumber) {
+  void explosionCenter(color c1, color c2, int tubeModulus, int tripodNumber) {
     pushMatrix();
     
-    println("explosion render fn" + tubeNumber + tripodNumber);
-    
-    translate(tubeNumber * (numLEDsPerTube * rectWidth) + (tubeNumber * 20 + 20), tripodNumber * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber
+    translate(tubeModulus * (numLEDsPerTube * rectWidth) + (tubeModulus * 20 + 20), tripodNumber * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber
   
     float cycleLength = 60;    // total frames for a round trip
     float t = ((frameCount-1)*1./cycleLength) % 1.;
@@ -61,7 +59,9 @@ class Explosion {
     
     fill(c);
     
-    //lighteffect.fadeToBlackBy(10);
+    _shouldFadeToBlack = true;
+    shouldTubeFadeToBlack();
+    _shouldFadeToBlackSpeed = 10;
     
     rect(tubeLength/2 - x - rectWidth, 0, rectWidth, rectHeight);
     rect(tubeLength/2 + x, 0, rectWidth, rectHeight);
