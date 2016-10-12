@@ -1,3 +1,8 @@
+import toxi.util.events.*;
+
+interface ExplosionEndedListener {
+  void explosionEnded(int tubeNumber);
+}
 
 class Explosion {
   private int tubeNumber;
@@ -9,6 +14,8 @@ class Explosion {
   
   private boolean _shouldFadeToBlack;
   private int _shouldFadeToBlackSpeed;
+  
+  public EventDispatcher<ExplosionEndedListener> dispatcher =new EventDispatcher<ExplosionEndedListener>();
   
   Explosion(int startTime, int touchLocation, int tubeNumber) {
     this.touchLocation = touchLocation;
@@ -49,6 +56,8 @@ class Explosion {
     float v = AULib.wave(AULib.WAVE_BIAS, t, a);
     float x = v * (tubeLength - rectWidth) / 2;
     color c = lerpColor(c2, c1, v);
+    
+    println("explosion render fn" + x + " " + c + " " + v);
     
     fill(c);
     
@@ -101,10 +110,13 @@ class Explosion {
     popMatrix();
   }
   
-  boolean finished() {
+  private void finished() {
      // TODO: determine if the explosion is finished
      
-     return false;
+     // now, send an event to each listener   
+     for(ExplosionEndedListener l : dispatcher) {
+        l.explosionEnded(this.tubeNumber);
+      }
   }
   
   int shouldTubeFadeToBlack() {

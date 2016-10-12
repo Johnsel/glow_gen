@@ -3,7 +3,9 @@
    .update checks the tubes that are active, decides what light-effect they should show and exectues the corrosponding functions
 */
 
-class Tube {
+import toxi.util.events.*;
+
+class Tube implements ExplosionEndedListener {
   private int tubeNumber;
   private int tubeModulus;
   private int tripodNumber;
@@ -24,6 +26,8 @@ class Tube {
     Explosion newExplosion = new Explosion(currentTime, touchLocation, this.tubeNumber);
     
     explosions.add(newExplosion);
+          newExplosion.update(currentTime);
+
     
     println("new explosion started, new size: " + explosions.size());
   }
@@ -43,7 +47,7 @@ class Tube {
     for (int i = 0; i < explosions.size(); i++) {
       Explosion explosion = explosions.get(i);
       
-      explosion.update(currentTime);
+      //explosion.update(currentTime);
       
       int fadeToBlackSpeed = explosion.shouldTubeFadeToBlack();
       
@@ -71,7 +75,7 @@ class Tube {
     } */
   }
   
-  void deactivateTube(/* enum<EffectTypes> type,*/ int tubeToDeactivate) {
+  void explosionEnded(/* enum<EffectTypes> type,*/ int tubeToDeactivate) {
     explosions.remove(tubeToDeactivate);
   }
   
