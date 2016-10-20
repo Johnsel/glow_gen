@@ -1,14 +1,16 @@
 class lightPoint {
 
   int tubeNumberClass, tripodNumberClass, movementDirection, randomSpeed, colorVarationLightPoint, colorVariationLightPoint;
-  float xPosition, yPosition, speedPoint, maximumLengthPointTale, lengthPointHead, j, lengthPointTale;
-  
+  float xPosition, yPosition, speedPoint, maximumLengthPointTale, lengthPointHead, j, lengthPointTale, noiseColor, lightpointXColor, fadeOutAmount, lenghtPointMain, lenghtPointMainCompensationFade;
+  boolean readyToRemoveLightPoint;
+
   color colorLightPoint;
 
   lightPoint(int tubeNumber, int tripodNumber) {
     speedPoint = 1;
-    maximumLengthPointTale = 350;
-    lengthPointHead = 50;
+    maximumLengthPointTale = rectWidth*15;
+    lengthPointHead = rectWidth*4;
+    lenghtPointMain = rectWidth*10;
 
     tubeNumberClass = tubeNumber;
     tripodNumberClass = tripodNumber;
@@ -18,40 +20,38 @@ class lightPoint {
     randomSpeed = int(random(0, 2.99));
     //Determine the starting position of the lightpoint
     if (movementDirection == 0) {
-      xPosition = 0 - lengthPointHead;
+      xPosition = 0 - lengthPointHead - lenghtPointMain;
     }
     if (movementDirection == 1) {
-      xPosition = tubeLength + lengthPointHead;
+      xPosition = tubeLength + lengthPointHead + lenghtPointMain;
     }
-    
-    colorVariationLightPoint = int(random(0,2.99));
-    
-    if (colorVariationLightPoint == 0){
-      colorLightPoint = e1;
-    }
-    if (colorVariationLightPoint == 1){
-      colorLightPoint = e2;
-    }
-    if (colorVariationLightPoint == 2){
-      colorLightPoint = e3;
-    }
-    
+
+    //Select a random begin for the speed function
+    j = random(0, 62);
+
+    //Select one of the options for color schemes of the lightpoint
+    colorVariationLightPoint = 1; //Three color schemes implemented right now
+
+    //Select a random begin for the color fading of the lightpoint to begin
+    lightpointXColor = random(0, 4);
+
+    println("new point generated, at " + tubeNumber + "," + tripodNumber + " with color variation " + colorVariationLightPoint);
   }
 
   void move() {
-    
+
     //println(randomSpeed);
     //calculating movement speed
-    j=j+0.005; //Determine how quickly the speed changes 
+    j=j+0.002; //Determine how quickly the speed changes 
 
     switch (randomSpeed) {
     case 0:
-      speedPoint = -((sin(3*(x-0.584))*cos(0.8*(x-0.584))+cos(0.5*(x-0.584))*sin (2*(x-0.584))+cos (0.8*(x-0.584)))-2.85)/4;
+      speedPoint = -((sin(3*(j-0.584))*cos(0.8*(j-0.584))+cos(0.5*(j-0.584))*sin (2*(j-0.584))+cos (0.8*(j-0.584)))-2.85)/4;
       break;
     case 1:
-      speedPoint = ((sin (2*(x-0.584))*sin(0.5*(x-0.584))+cos(0.5*(x-0.584))*sin(05*(x-0.584))+cos(0.8*(x-0.584)))+2.85)/4;
+      speedPoint = ((sin (2*(j-0.584))*sin(0.5*(j-0.584))+cos(0.5*(j-0.584))*sin(05*(j-0.584))+cos(0.8*(j-0.584)))+2.85)/4;
       break;
-      case 2:
+    case 2:
       speedPoint = ((sin(3*(j-0.584))*cos(0.8*(j-0.584))+cos(0.5*(j-0.584))*sin(2*(j-0.584))+cos(0.8*(j-0.584)))+2.85)/4;
       break;
     }
@@ -76,13 +76,13 @@ class lightPoint {
     if (movementDirection == 0) {
       if (xPosition - lengthPointTale >= tubeLength) {
         tripodNumberClass ++; 
-        xPosition = 0 - lengthPointHead;
+        xPosition = 0 - lengthPointHead - lenghtPointMain ;
       }
     }
     if (movementDirection == 1) {
       if (xPosition <= 0 - lengthPointTale) {
         tripodNumberClass --; 
-        xPosition = tubeLength + lengthPointHead;
+        xPosition = tubeLength + lengthPointHead + lenghtPointMain;
       }
     }
     if (tripodNumberClass > 40) {
@@ -99,32 +99,54 @@ class lightPoint {
     //1.243 maximum of sinus function
     lengthPointTale = map(speedPoint, 0, 1.243, 20, maximumLengthPointTale);
 
+    lenghtPointMainCompensationFade = lenghtPointMain / 2;
+    
+    lightpointXColor+=0.001;
+    noiseColor = ((sin(lightpointXColor)*cos(6*lightpointXColor)+cos(6*lightpointXColor)*sin(lightpointXColor))/4)+0.5;
+
+    //For looping the animation of color
+    if (lightpointXColor > ((5*PI)/2)) {
+      lightpointXColor = -1;
+    }
+
+    if (colorVariationLightPoint == 0) {
+      colorLightPoint = lerpColor(e1, e1_1, noiseColor);
+    }
+    if (colorVariationLightPoint == 1) {
+      colorLightPoint = lerpColor(e2, e2_1, noiseColor);
+    }
+    if (colorVariationLightPoint == 2) {
+      colorLightPoint = lerpColor(e3, e3_1, noiseColor);
+    }
+
+
+
     pushMatrix();
-    noFill();
     translate((tubeNumberClass - 1) * (numLEDsPerTube * rectWidth) + (tubeNumberClass * 20), tripodNumberClass * 21);
     //Movement left
     if (movementDirection == 1) { 
       //gradient to right
-      for (float i = xPosition; i <= xPosition+lengthPointTale; i++) {
+      for (float i = xPosition; i <= xPosition+lengthPointTale; i+=rectWidth) {
         pushStyle();
         float inter = map(i, xPosition, xPosition+lengthPointTale, 255, 0);
         //color c = lerpColor(c2, b1, inter);
 
-        if (i >= 0 && i<=tubeLength) { //keep within raster
-          stroke(colorLightPoint, inter);
-          line(i, yPosition+rectHeight, i, yPosition);
+        if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
+          fill(colorLightPoint, inter);
+          rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
       }
+
       //smooth out lightpoint infront
-      for (float i = xPosition; i > xPosition-lengthPointHead; i--) {
+      for (float i = xPosition; i > xPosition-lengthPointHead; i-=rectWidth) {
         pushStyle();
         float inter = map(i, xPosition-lengthPointHead, xPosition, 0, 255);
         //color c = lerpColor(c2, b1, inter);
 
-        if (i >= 0 && i<=tubeLength) { //keep within raster
-          stroke(colorLightPoint, inter);          
-          line(i, yPosition+rectHeight, i, yPosition);
+        if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
+          fill(colorLightPoint, inter);
+          rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
       }
@@ -132,36 +154,48 @@ class lightPoint {
     //Movement right
     if (movementDirection == 0) {
       //gradient to left
-      for (float i = xPosition; i > xPosition-lengthPointTale; i--) {
+      for (float i = xPosition; i >= xPosition-lengthPointTale-lenghtPointMain; i-=rectWidth) {
         pushStyle();
         float inter = map(i, xPosition-lengthPointTale, xPosition, 0, 255);
         //color c = lerpColor(c2, b1, inter);
 
-        if (i >= 0 && i<=tubeLength) { //keep within raster
-          stroke(colorLightPoint, inter);
-          line(i, yPosition+rectHeight, i, yPosition);
+        if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
+          fill(colorLightPoint, inter);
+          rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
       }
-      //smooth out lightpoint infront
-      for (float i = xPosition; i <= xPosition+lengthPointHead; i++) {
+
+      //Center of the point
+      for (float i = xPosition; i < xPosition + lenghtPointMain; i+=rectWidth) {
         pushStyle();
-        float inter = map(i, xPosition, xPosition+lengthPointHead, 255, 0);
+        if (i >= 0 - rectWidth && i<=tubeLength) {
+          fill (colorLightPoint);
+          rect(i, yPosition, rectWidth, rectWidth);
+        }
+        popStyle();
+      }
+
+      //smooth out lightpoint infront
+      for (float i = xPosition + lenghtPointMain; i <= xPosition+lengthPointHead+lenghtPointMain; i+=rectWidth) {
+        pushStyle();
+
+        float inter = map(i, xPosition + lenghtPointMain, xPosition+lengthPointHead+lenghtPointMain, 255, 0);
         //color c = lerpColor(c2, b1, inter);
 
-        if (i >= 0 && i<=tubeLength) { //keep within raster
-          stroke(colorLightPoint, inter);
-          line(i, yPosition+rectHeight, i, yPosition);
+        if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
+          fill(colorLightPoint, inter-fadeOutAmount);
+          rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
       }
     }
-
     popMatrix();
   }
-  
-  void fadeOut(){
-    
+
+  void fadeOut() {
+    if (readyToRemoveLightPoint) {
+      fadeOutAmount++;
+    }
   }
-  
 }

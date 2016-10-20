@@ -31,4 +31,6 @@ void selectingSystem(){
   //println(currentSelectedTripod);
   popStyle();
   popMatrix();
+  
+  
 }

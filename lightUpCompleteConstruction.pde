@@ -1,7 +1,9 @@
 //BLOCKS - less rendering..
 
+//Still needs some random movement of the sizes of blue areas, 
+
 float xCountNoise, yCountNoise, xSinusBackground;
-float noiseScale = .002;
+float noiseScale = .005;
 
 void lightUpCompleteConstruction() {
 
@@ -13,7 +15,7 @@ void lightUpCompleteConstruction() {
   if(xSinusBackground >= 2*PI){
     xSinusBackground = 0;
   }
-  //println(yCountNoise);
+  //println(xCountNoise);
   
   
   //Noise background generation
@@ -35,6 +37,14 @@ void lightUpCompleteConstruction() {
     popStyle();
     popMatrix();
   }
+  
+  
+  
+  
+  
+  //for (int i=0; i>radius; i++){
+    
+  //}
   
   //Some random example code, not important. 
   //for (int b = 1; b <= numTripods; b++) {
