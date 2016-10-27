@@ -26,6 +26,10 @@ void setup() {
   background(0);
   noStroke();
   font = createFont("Arial Bold", 48);
+    
+  tubes.listeners.addListener(new moveListener());
+  
+  
 
   for (int i=0; i< numTubes; i++) {
     tubes[i] = new Tube(i);
@@ -57,6 +61,12 @@ void draw() {
    the setGradient feature is made to give an idea how this can be done for each tube.
    */
 }
+
+class moveListener implements moveLightPointListener {
+  void moveLightPoint(int tubeNumber, int movementDirection) {
+    println("moveLightPoint to" + tubeNumber + 1);
+  }
+} 
 
 void keyPressed() { 
   /* this function can be used as an input later on

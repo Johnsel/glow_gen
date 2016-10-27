@@ -1,11 +1,17 @@
 
+interface moveAndRemoveLightPointListener {
+  void moveAndRemoveLightPoint(int tubeNumber, int movementDirection);
+}
+
 class lightPoint {
 
-  int tubeNumberClass, tripodNumberClass, movementDirection, randomSpeed, colorVarationLightPoint, colorVariationLightPoint;
+  int tubeNumberClass, tripodNumberClass, movementDirection, randomSpeed, colorVarationLightPoint, colorVariationLightPoint, tubeNumber;
   float xPosition, yPosition, speedPoint, maximumLengthPointTale, lengthPointHead, j, lengthPointTale, noiseColor, lightpointXColor, fadeOutAmount, lenghtPointMain, lenghtPointMainCompensationFade;
   boolean readyToRemoveLightPoint;
 
   color colorLightPoint;
+
+  EventDispatcher<moveAndRemoveLightPointListener> listeners = new EventDispatcher<moveAndRemoveLightPointListener>();
 
   lightPoint(int tubeNumber, int tripodNumber) {
     speedPoint = 1;
@@ -15,6 +21,7 @@ class lightPoint {
 
     tubeNumberClass = tubeNumber;
     tripodNumberClass = tripodNumber;
+    this.tubeNumber = (tripodNumberClass*3)+tubeNumberClass;
 
     movementDirection = int(random(0, 1.99)); //0-right 1-left
 
@@ -76,8 +83,10 @@ class lightPoint {
   void endTube() {
     if (movementDirection == 0) {
       if (xPosition - lengthPointTale >= tubeLength) {
-        tripodNumberClass ++; 
-        xPosition = 0 - lengthPointHead - lenghtPointMain ;
+        for (moveAndRemoveLightPointListener l : listeners ) {
+          println("moveAndRemoveLightPoint request send");
+          l.moveAndRemoveLightPoint(this.tubeNumber, movementDirection);
+        }
       }
     }
     if (movementDirection == 1) {
@@ -119,8 +128,6 @@ class lightPoint {
     if (colorVariationLightPoint == 2) {
       colorLightPoint = lerpColor(e3, e3_1, noiseColor);
     }
-
-
 
     pushMatrix();
     translate(tubeNumberClass * (numLEDsPerTube * rectWidth) + (tubeNumberClass * 20 + 20), tripodNumberClass * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber

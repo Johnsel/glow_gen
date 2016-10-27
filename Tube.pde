@@ -5,14 +5,26 @@
 
 import toxi.util.events.*;
 
-class Tube implements ExplosionEndedListener {
+//Move lightPoint
+interface moveLightPointListener {
+  void moveLightPoint(int tubeNumber, int movementDirection);
+}
+
+
+
+class Tube implements ExplosionEndedListener, moveAndRemoveLightPointListener {
+
+  tubes.listeners.addListener(new moveListener());
+
   private int tubeNumber;
   private int tubeModulus;
   private int tripodNumber;
 
-  private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+  ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 
-  private ArrayList<lightPoint> lightPoints = new ArrayList<lightPoint>();
+  ArrayList<lightPoint> lightPoints = new ArrayList<lightPoint>();
+
+  public EventDispatcher<moveLightPointListener> listeners = new EventDispatcher<moveLightPointListener>();
 
   Tube(int tubeNumber) {
     this.tubeNumber = tubeNumber;
@@ -65,9 +77,9 @@ class Tube implements ExplosionEndedListener {
     for (int i = lightPoints.size()-1; i >= 0; i--) { 
       // An ArrayList doesn't know what it is storing so we have to cast the object coming out
       lightPoint lightpoint = lightPoints.get(i);
-      lightpoint.endTube();
       lightpoint.move();
       lightpoint.display();
+      lightpoint.endTube();
       //if (lightpoint.finished()) {
       //  // Items can be deleted with remove()
       //  lightPoints.remove(i);
@@ -91,6 +103,14 @@ class Tube implements ExplosionEndedListener {
 
   void explosionEnded(/* enum<EffectTypes> type,*/ int tubeToDeactivate) {
     explosions.remove(tubeToDeactivate);
+  }
+
+  void moveAndRemoveLightPoint(int tubeNumber, int movementDirection) {
+    lightPoints.remove(tubeNumber); 
+
+    for (moveLightPointListener l : listeners) {
+      l.moveLightPoint(tubeNumber, movementDirection);
+    }
   }
 
   void fadeToBlackBy(int fadeAmount) {
