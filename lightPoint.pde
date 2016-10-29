@@ -1,122 +1,117 @@
 
-interface moveAndRemoveLightPointListener {
-  void moveAndRemoveLightPoint(int tubeNumber, int movementDirection);
-}
-
 class lightPoint {
 
-  int tubeNumberClass, tripodNumberClass, movementDirection, randomSpeed, colorVarationLightPoint, colorVariationLightPoint, tubeNumber;
+  int tubeModulus, tripodNumber, movementDirection, randomSpeed, colorVarationLightPoint, colorVariationLightPoint;
   float xPosition, yPosition, speedPoint, maximumLengthPointTale, lengthPointHead, j, lengthPointTale, noiseColor, lightpointXColor, fadeOutAmount, lenghtPointMain, lenghtPointMainCompensationFade;
   boolean readyToRemoveLightPoint;
 
   color colorLightPoint;
 
-  EventDispatcher<moveAndRemoveLightPointListener> listeners = new EventDispatcher<moveAndRemoveLightPointListener>();
+  lightPoint(int tubeModulus, int tripodNumber, int movementDirection, int randomSpeed, float j, float lightpointXColor) {
 
-  lightPoint(int tubeNumber, int tripodNumber) {
-    speedPoint = 1;
-    maximumLengthPointTale = rectWidth*15;
+    maximumLengthPointTale = rectWidth*30;
     lengthPointHead = rectWidth*4;
-    lenghtPointMain = rectWidth*10;
+    lenghtPointMain = rectWidth*2;
 
-    tubeNumberClass = tubeNumber;
-    tripodNumberClass = tripodNumber;
-    this.tubeNumber = (tripodNumberClass*3)+tubeNumberClass;
+    this.tubeModulus = tubeModulus;
+    this.tripodNumber = tripodNumber;
 
-    movementDirection = int(random(0, 1.99)); //0-right 1-left
+    this.movementDirection = movementDirection; //0-right 1-left
 
-    randomSpeed = int(random(0, 2.99));
+    this.speedPoint = speedPoint;
+
+    this.randomSpeed = randomSpeed;
     //Determine the starting position of the lightpoint
-    if (movementDirection == 0) {
+    if (this.movementDirection == 0) {
       xPosition = 0 - lengthPointHead - lenghtPointMain;
     }
-    if (movementDirection == 1) {
+    if (this.movementDirection == 1) {
       xPosition = tubeLength + lengthPointHead + lenghtPointMain;
     }
 
     //Select a random begin for the speed function
-    j = random(0, 62);
+    this.j = j;
 
     //Select one of the options for color schemes of the lightpoint
     colorVariationLightPoint = 1; //Three color schemes implemented right now
 
     //Select a random begin for the color fading of the lightpoint to begin
-    lightpointXColor = random(0, 4);
+    this.lightpointXColor = lightpointXColor;
 
-    println("new point generated, at " + tubeNumber + "," + tripodNumber + " with color variation " + colorVariationLightPoint);
+    println("new point generated, at " + this.tubeModulus + "," + this.tripodNumber + " with color variation " + colorVariationLightPoint);
   }
 
   void move() {
 
-    //println(randomSpeed);
+    //println(this.randomSpeed);
     //calculating movement speed
-    j=j+0.002; //Determine how quickly the speed changes 
+    this.j += 0.002; //Determine how quickly the speed changes 
 
-    switch (randomSpeed) {
+    switch (this.randomSpeed) {
     case 0:
-      speedPoint = -((sin(3*(j-0.584))*cos(0.8*(j-0.584))+cos(0.5*(j-0.584))*sin (2*(j-0.584))+cos (0.8*(j-0.584)))-2.85)/4;
+      this.speedPoint = -((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin (2*(this.j-0.584))+cos (0.8*(this.j-0.584)))-2.85)/4;
       break;
     case 1:
-      speedPoint = ((sin (2*(j-0.584))*sin(0.5*(j-0.584))+cos(0.5*(j-0.584))*sin(05*(j-0.584))+cos(0.8*(j-0.584)))+2.85)/4;
+      this.speedPoint = ((sin (2*(this.j-0.584))*sin(0.5*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(05*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/4;
       break;
     case 2:
-      speedPoint = ((sin(3*(j-0.584))*cos(0.8*(j-0.584))+cos(0.5*(j-0.584))*sin(2*(j-0.584))+cos(0.8*(j-0.584)))+2.85)/4;
+      this.speedPoint = ((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(2*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/4;
       break;
     }
-    //speedPoint = (sin(3*(j+19.548))*cos(0.5*(j+19.548))+cos(0.5*(j+19.548))*sin(2*(j+19.548))+1.865)/3;
-    if (j > 62.8) {
-      j = 0;
+    //this.speedPoint = (sin(3*(this.j+19.548))*cos(0.5*(this.j+19.548))+cos(0.5*(this.j+19.548))*sin(2*(this.j+19.548))+1.865)/3;
+    if (this.j > 62.8) {
+      this.j = 0;
     }
-    //println(speedPoint);
+    //println(this.speedPoint);
 
 
     //Calculating x position of point within tube
-    if (movementDirection == 0) {
-      xPosition = xPosition + speedPoint;
+    if (this.movementDirection == 0) {
+      xPosition = xPosition + this.speedPoint;
     }
-    if (movementDirection == 1) {
-      xPosition = xPosition - speedPoint;
+    if (this.movementDirection == 1) {
+      xPosition = xPosition - this.speedPoint;
     }
-    //println(movementDirection);
+    //println(this.movementDirection);
   }
 
-  void endTube() {
-    if (movementDirection == 0) {
+  boolean endTube() {
+    if (this.movementDirection == 0) {
       if (xPosition - lengthPointTale >= tubeLength) {
-        for (moveAndRemoveLightPointListener l : listeners ) {
-          println("moveAndRemoveLightPoint request send");
-          l.moveAndRemoveLightPoint(this.tubeNumber, movementDirection);
-        }
+        moveLightPointNextTripod(this.tubeModulus, this.tripodNumber, this.movementDirection, this.randomSpeed, this.j, this.lightpointXColor);
+        return true;
       }
     }
-    if (movementDirection == 1) {
+    if (this.movementDirection == 1) {
       if (xPosition <= 0 - lengthPointTale) {
-        tripodNumberClass --; 
-        xPosition = tubeLength + lengthPointHead + lenghtPointMain;
+        moveLightPointNextTripod(this.tubeModulus, this.tripodNumber, this.movementDirection, this.randomSpeed, this.j, this.lightpointXColor);
+        return true;
       }
     }
-    if (tripodNumberClass > 40) {
-      println("executed");
-      tripodNumberClass = 1;
-    }
-    if (tripodNumberClass < 1) {
-      tripodNumberClass = numTripods;
-    }
+    return false;
+
+    //if (this.tripodNumber > 40) {
+    //  println("executed");
+    //  this.tripodNumber = 1;
+    //}
+    //if (this.tripodNumber < 1) {
+    //  this.tripodNumber = numTripods;
+    //}
   }
 
   void display() {
     //Calculate length of tale point with regards to the speed of point
     //1.243 maximum of sinus function
-    lengthPointTale = map(speedPoint, 0, 1.243, 20, maximumLengthPointTale);
+    lengthPointTale = map(this.speedPoint, 0, 1.243, 20, maximumLengthPointTale);
 
     lenghtPointMainCompensationFade = lenghtPointMain / 2;
 
-    lightpointXColor+=0.001;
-    noiseColor = ((sin(lightpointXColor)*cos(6*lightpointXColor)+cos(6*lightpointXColor)*sin(lightpointXColor))/4)+0.5;
+    this.lightpointXColor+=0.001;
+    noiseColor = ((sin(this.lightpointXColor)*cos(6*this.lightpointXColor)+cos(6*this.lightpointXColor)*sin(this.lightpointXColor))/4)+0.5;
 
     //For looping the animation of color
-    if (lightpointXColor > ((5*PI)/2)) {
-      lightpointXColor = -1;
+    if (this.lightpointXColor > ((5*PI)/2)) {
+      this.lightpointXColor = -1;
     }
 
     if (colorVariationLightPoint == 0) {
@@ -129,10 +124,12 @@ class lightPoint {
       colorLightPoint = lerpColor(e3, e3_1, noiseColor);
     }
 
+
+
     pushMatrix();
-    translate(tubeNumberClass * (numLEDsPerTube * rectWidth) + (tubeNumberClass * 20 + 20), tripodNumberClass * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber
+    translate(this.tubeModulus * (numLEDsPerTube * rectWidth) + (this.tubeModulus * 20 + 20), this.tripodNumber * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeModulus and tripodNumber
     //Movement left
-    if (movementDirection == 1) { 
+    if (this.movementDirection == 1) { 
       //gradient to right
       for (float i = xPosition; i <= xPosition+lengthPointTale; i+=rectWidth) {
         pushStyle();
@@ -160,7 +157,7 @@ class lightPoint {
       }
     }
     //Movement right
-    if (movementDirection == 0) {
+    if (this.movementDirection == 0) {
       //gradient to left
       for (float i = xPosition; i >= xPosition-lengthPointTale-lenghtPointMain; i-=rectWidth) {
         pushStyle();

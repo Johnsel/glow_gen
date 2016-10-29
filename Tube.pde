@@ -5,26 +5,14 @@
 
 import toxi.util.events.*;
 
-//Move lightPoint
-interface moveLightPointListener {
-  void moveLightPoint(int tubeNumber, int movementDirection);
-}
-
-
-
-class Tube implements ExplosionEndedListener, moveAndRemoveLightPointListener {
-
-  tubes.listeners.addListener(new moveListener());
-
+class Tube implements ExplosionEndedListener {
   private int tubeNumber;
   private int tubeModulus;
   private int tripodNumber;
 
-  ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+  private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 
-  ArrayList<lightPoint> lightPoints = new ArrayList<lightPoint>();
-
-  public EventDispatcher<moveLightPointListener> listeners = new EventDispatcher<moveLightPointListener>();
+  private ArrayList<lightPoint> lightPoints = new ArrayList<lightPoint>();
 
   Tube(int tubeNumber) {
     this.tubeNumber = tubeNumber;
@@ -77,13 +65,12 @@ class Tube implements ExplosionEndedListener, moveAndRemoveLightPointListener {
     for (int i = lightPoints.size()-1; i >= 0; i--) { 
       // An ArrayList doesn't know what it is storing so we have to cast the object coming out
       lightPoint lightpoint = lightPoints.get(i);
+      lightpoint.endTube();
       lightpoint.move();
       lightpoint.display();
-      lightpoint.endTube();
-      //if (lightpoint.finished()) {
-      //  // Items can be deleted with remove()
-      //  lightPoints.remove(i);
-      //}
+      if (lightpoint.endTube()) {
+        lightPoints.remove(i);
+      }
     }
 
     /*
@@ -105,14 +92,6 @@ class Tube implements ExplosionEndedListener, moveAndRemoveLightPointListener {
     explosions.remove(tubeToDeactivate);
   }
 
-  void moveAndRemoveLightPoint(int tubeNumber, int movementDirection) {
-    lightPoints.remove(tubeNumber); 
-
-    for (moveLightPointListener l : listeners) {
-      l.moveLightPoint(tubeNumber, movementDirection);
-    }
-  }
-
   void fadeToBlackBy(int fadeAmount) {
     pushMatrix();
     translate(tubeModulus * (numLEDsPerTube * rectWidth) + (tubeModulus * 20 + 20), tripodNumber * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeNumber and tripodNumber
@@ -126,8 +105,8 @@ class Tube implements ExplosionEndedListener, moveAndRemoveLightPointListener {
     popMatrix();
   }
 
-  void addLightPoint() {
-    lightPoint newLightPoint  = new lightPoint(this.tubeModulus, this.tripodNumber);
+  void addLightPoint(int movementDirection, int randomSpeed, float j, float lightPointXColor) {
+    lightPoint newLightPoint  = new lightPoint(this.tubeModulus, this.tripodNumber, movementDirection, randomSpeed, j, lightPointXColor);
     lightPoints.add(newLightPoint);
-  }
+  }  
 }
