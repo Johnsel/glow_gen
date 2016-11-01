@@ -96,14 +96,22 @@ void keyPressed() {
 
   if (key == ENTER) {
     selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
-    tubes[selectedTube].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4));
+    tubes[selectedTube].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0);
     println("added lightpoint at " + selectedTube);
   }
-  if (key == BACKSPACE){
-    for (int i=0; i<30; i++){
+  if (key == BACKSPACE) {
+    for (int i=0; i<30; i++) {
       int tubeRandom = int(random(0, 119));
-      tubes[tubeRandom].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4));
+      tubes[tubeRandom].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0);
     }
+  }
+  if (key == '1') {
+    tubes[selectedTube].addExplosionLightPoint(tubeLength/2);
+  }
+
+  if (key == '2') {
+    selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
+    tubes[selectedTube].isTouched(1);
   }
 }
 
@@ -116,12 +124,18 @@ void keyReleased() {
   //println("sending untouched to tube");
 
   //tubes[sendingTube].isUntouched();
+  
+  
+  if (key == '2') {
+    selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
+    tubes[selectedTube].isUntouched();
+  }
 }
 
 int tripodNumber, tubeModulus;
 
 //Function to move lightPoint to another tube with all its corresponding characteristics
-void moveLightPointNextTripod(int tubeModulus, int tripodNumber, int movementDirection, int randomSpeed, float j, float lightPointXColor) {
+void moveLightPointNextTripod(int tubeModulus, int tripodNumber, int movementDirection, int randomSpeed, float j, float lightPointXColor, boolean lightPointReleased, int timeCountSpeedMultiplier) {
 
   this.tripodNumber = tripodNumber;
   this.tubeModulus = tubeModulus;
@@ -141,6 +155,6 @@ void moveLightPointNextTripod(int tubeModulus, int tripodNumber, int movementDir
 
   tubeNumber = (this.tripodNumber*3)+this.tubeModulus;
 
-  tubes[tubeNumber].addLightPoint(movementDirection, randomSpeed, j, lightPointXColor);
+  tubes[tubeNumber].addLightPoint(movementDirection, randomSpeed, j, lightPointXColor, lightPointReleased, timeCountSpeedMultiplier);
   //println("added lightpoint at " + this.tubeNumber + " with " + this.tubeModulus + " and " + this.tripodNumber);
 }
