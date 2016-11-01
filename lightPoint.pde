@@ -1,8 +1,8 @@
 
 class lightPoint {
 
-  int tubeModulus, tripodNumber, movementDirection, randomSpeed, colorVarationLightPoint, colorVariationLightPoint;
-  float xPosition, yPosition, speedPoint, maximumLengthPointTale, lengthPointHead, j, lengthPointTale, noiseColor, lightpointXColor, fadeOutAmount, lenghtPointMain, lenghtPointMainCompensationFade, multiplierGrow, speedGrowing;
+  int tubeModulus, tripodNumber, movementDirection, randomSpeed, colorVarationLightPoint, colorVariationLightPoint, countGrowing, lenghtPointMain;
+  float xPosition, yPosition, speedPoint, maximumLengthPointTale, lengthPointHead, j, lengthPointTale, noiseColor, lightpointXColor, fadeOutAmount, lenghtPointMainCompensationFade, multiplierGrow, speedGrowing;
   boolean readyToRemoveLightPoint;
 
   boolean lightPointGrowing = false;
@@ -13,11 +13,12 @@ class lightPoint {
   int timeCount, timeCountSpeedMultiplier;
   float time, multiplierSpeed, totalDistanceGrowingRight, distanceGrowingLeft, distanceGrowingRight, timeSpeed;
 
-  lightPoint(int tubeModulus, int tripodNumber, int movementDirection, int randomSpeed, float j, float lightpointXColor, boolean lightPointReleased, int timeCountSpeedMultiplier) {
+  lightPoint(int tubeModulus, int tripodNumber, int movementDirection, int randomSpeed, float j, float lightpointXColor, boolean lightPointReleased, int timeCountSpeedMultiplier, int lenghtPointMain) {
 
     maximumLengthPointTale = rectWidth*15;
     lengthPointHead = rectWidth*5;
-    lenghtPointMain = rectWidth*2;
+    
+    this.lenghtPointMain = lenghtPointMain;
 
     this.tubeModulus = tubeModulus;
     this.tripodNumber = tripodNumber;
@@ -27,23 +28,23 @@ class lightPoint {
     this.randomSpeed = randomSpeed;
     //Determine the starting position of the lightpoint
     if (this.movementDirection == 0) {
-      xPosition = 0 - lengthPointHead - lenghtPointMain;
+      xPosition = 0 - lengthPointHead - this.lenghtPointMain;
     }
     if (this.movementDirection == 1) {
-      xPosition = tubeLength + lengthPointHead + lenghtPointMain;
+      xPosition = tubeLength + lengthPointHead + this.lenghtPointMain;
     }
 
     //Select a random begin for the speed function
     this.j = j;
 
     //Select one of the options for color schemes of the lightpoint
-    colorVariationLightPoint = int(random(0,2.99)); //Three color schemes implemented right now
+    colorVariationLightPoint = 1; //Three color schemes implemented right now
 
     //Select a random begin for the color fading of the lightpoint to begin
     this.lightpointXColor = lightpointXColor;
-    
+
     this.lightPointReleased = lightPointReleased;
-    
+
     this.timeCountSpeedMultiplier = timeCountSpeedMultiplier;
 
     println("new point generated, at " + this.tubeModulus + "," + this.tripodNumber + " with color variation " + colorVariationLightPoint);
@@ -53,7 +54,7 @@ class lightPoint {
 
     //println(this.randomSpeed);
     //calculating movement speed
-    this.j += 0.002; //Determine how quickly the speed changes 
+    this.j += 0.002; //Determine how quickly the speed changes
 
     switch (this.randomSpeed) {
     case 0:
@@ -89,16 +90,17 @@ class lightPoint {
     }
   }
 
+
   boolean endTube() {
     if (this.movementDirection == 0) {
-      if (xPosition - lengthPointTale >= tubeLength) {
-        moveLightPointNextTripod(this.tubeModulus, this.tripodNumber, this.movementDirection, this.randomSpeed, this.j, this.lightpointXColor, this.lightPointReleased, this.timeCountSpeedMultiplier);
+      if (xPosition - lengthPointTale - (this.lenghtPointMain/2)  >= tubeLength) {
+        moveLightPointNextTripod(this.tubeModulus, this.tripodNumber, this.movementDirection, this.randomSpeed, this.j, this.lightpointXColor, this.lightPointReleased, this.timeCountSpeedMultiplier, this.lenghtPointMain);
         return true;
       }
     }
     if (this.movementDirection == 1) {
-      if (xPosition <= 0 - lengthPointTale) {
-        moveLightPointNextTripod(this.tubeModulus, this.tripodNumber, this.movementDirection, this.randomSpeed, this.j, this.lightpointXColor, this.lightPointReleased, this.timeCountSpeedMultiplier);
+      if (xPosition <= 0 - lengthPointTale - (lenghtPointMain/2)) {
+        moveLightPointNextTripod(this.tubeModulus, this.tripodNumber, this.movementDirection, this.randomSpeed, this.j, this.lightpointXColor, this.lightPointReleased, this.timeCountSpeedMultiplier, this.lenghtPointMain);
         return true;
       }
     }
@@ -155,11 +157,11 @@ class lightPoint {
     pushMatrix();
     translate(this.tubeModulus * (numLEDsPerTube * rectWidth) + (this.tubeModulus * 20 + 20), this.tripodNumber * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeModulus and tripodNumber
     //Movement left
-    if (this.movementDirection == 1) { 
+    if (this.movementDirection == 1) {
       //gradient to right
-      for (float i = xPosition + (lenghtPointMain/2); i <= xPosition+lengthPointTale+(lenghtPointMain/2); i+=rectWidth) {
+      for (float i = xPosition + (this.lenghtPointMain/2); i <= xPosition+lengthPointTale+(this.lenghtPointMain/2); i+=rectWidth) {
         pushStyle();
-        float inter = map(i, xPosition + (lenghtPointMain/2), xPosition+lengthPointTale+(lenghtPointMain/2), 200, 0);
+        float inter = map(i, xPosition + (this.lenghtPointMain/2), xPosition+lengthPointTale+(this.lenghtPointMain/2), 200, 0);
         //color c = lerpColor(c2, b1, inter);
 
         if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
@@ -169,28 +171,28 @@ class lightPoint {
         popStyle();
       }
 
-      for (float i = xPosition - (lenghtPointMain/2); i <= xPosition; i+=rectWidth) {
+      for (float i = xPosition - (this.lenghtPointMain/2); i < xPosition; i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint,200);
+          fill (colorLightPoint, 200);
           rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
       }
 
-      for (float i = xPosition; i <= xPosition + (lenghtPointMain/2); i+=rectWidth) {
+      for (float i = xPosition; i < xPosition + (this.lenghtPointMain/2); i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint,200);
+          fill (colorLightPoint, 200);
           rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
       }
 
       //smooth out lightpoint infront
-      for (float i = xPosition - (lenghtPointMain/2); i >= xPosition - (lenghtPointMain/2) - lengthPointHead; i-=rectWidth) {
+      for (float i = xPosition - (this.lenghtPointMain/2) - rectWidth; i >= xPosition - (this.lenghtPointMain/2) - lengthPointHead; i-=rectWidth) {
         pushStyle();
-        float inter = map(i, xPosition - (lenghtPointMain/2), xPosition - (lenghtPointMain/2) - lengthPointHead, 200, 0);
+        float inter = map(i, xPosition - (this.lenghtPointMain/2) - rectWidth, xPosition - (this.lenghtPointMain/2) - lengthPointHead, 200, 0);
         //color c = lerpColor(c2, b1, inter);
 
         if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
@@ -203,9 +205,9 @@ class lightPoint {
     //Movement right
     if (this.movementDirection == 0) {
       //gradient to left
-      for (float i = xPosition - (lenghtPointMain/2); i >= xPosition - lengthPointTale - (lenghtPointMain/2); i-=rectWidth) {
+      for (float i = xPosition - (this.lenghtPointMain/2) - rectWidth; i >= xPosition - lengthPointTale - (this.lenghtPointMain/2); i-=rectWidth) {
         pushStyle();
-        float inter = map(i, xPosition - (lenghtPointMain/2), xPosition - lengthPointTale - (lenghtPointMain/2), 200, 0);
+        float inter = map(i, xPosition - (this.lenghtPointMain/2) - rectWidth, xPosition - lengthPointTale - (this.lenghtPointMain/2), 200, 0);
         //color c = lerpColor(c2, b1, inter);
 
         if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
@@ -215,19 +217,19 @@ class lightPoint {
         popStyle();
       }
 
-      for (float i = xPosition - (lenghtPointMain/2); i <= xPosition; i+=rectWidth) {
+      for (float i = xPosition - (this.lenghtPointMain/2); i < xPosition; i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint,200);
+          fill (colorLightPoint, 200);
           rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
       }
 
-      for (float i = xPosition; i <= xPosition + (lenghtPointMain/2); i+=rectWidth) {
+      for (float i = xPosition; i < xPosition + (this.lenghtPointMain/2); i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint,200);
+          fill (colorLightPoint, 200);
           rect(i, yPosition, rectWidth, rectWidth);
         }
         popStyle();
@@ -235,15 +237,15 @@ class lightPoint {
 
       //pushStyle();
 
-      //rect(xPosition - (lenghtPointMain/2), yPosition, (lenghtPointMain/2), rectWidth);
-      //rect(xPosition, yPosition, (lenghtPointMain/2), rectWidth);
+      //rect(xPosition - (this.lenghtPointMain/2), yPosition, (this.lenghtPointMain/2), rectWidth);
+      //rect(xPosition, yPosition, (this.lenghtPointMain/2), rectWidth);
 
       //popStyle();
       //smooth out lightpoint infront
-      for (float i = xPosition + (lenghtPointMain/2); i <= xPosition+lengthPointHead+(lenghtPointMain/2); i+=rectWidth) {
+      for (float i = xPosition + (this.lenghtPointMain/2); i <= xPosition+lengthPointHead+(this.lenghtPointMain/2); i+=rectWidth) {
         pushStyle();
 
-        float inter = map(i, xPosition + (lenghtPointMain/2), xPosition+lengthPointHead+(lenghtPointMain/2), 200, 0);
+        float inter = map(i, xPosition + (this.lenghtPointMain/2), xPosition+lengthPointHead+(this.lenghtPointMain/2), 200, 0);
         //color c = lerpColor(c2, b1, inter);
 
         if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
@@ -278,8 +280,9 @@ class lightPoint {
         }
       } else {
 
-        this.j += 0.03; //Determine how quickly the speed changes 
+        this.j += 0.03; //Determine how quickly the speed changes
 
+        //Same formula used as the moving functions only faster, TODO? Rewrite to make this more efficient
         switch (this.randomSpeed) {
         case 0:
           multiplierGrow = -((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin (2*(this.j-0.584))+cos (0.8*(this.j-0.584)))-2.85)/4;
@@ -297,7 +300,6 @@ class lightPoint {
         }
       }
 
-
       //Reset easing animation
       if (this.speedPoint < 0.01 && this.speedPoint > -0.01) {
         this.speedPoint = 0;
@@ -313,8 +315,8 @@ class lightPoint {
       //println("growing");
 
       timeCount ++;
-      
-      if (timeCount > 30){
+
+      if (timeCount > 30) {
         timeCount = 0;
       }
 
@@ -335,6 +337,18 @@ class lightPoint {
       if (distanceGrowingLeft >= 0 - rectWidth && distanceGrowingLeft<=tubeLength) { //keep dots in tube
         rect(distanceGrowingLeft, yPosition, rectWidth, rectWidth);
       }
+
+
+      if (speedGrowing >= 0.98) {
+        countGrowing++;
+
+        if (countGrowing == 3) {
+
+          this.lenghtPointMain += rectWidth;
+          println(this.lenghtPointMain/rectWidth);
+          countGrowing = 0;
+        }
+      }
     }
     popStyle();
 
@@ -342,12 +356,21 @@ class lightPoint {
       this.timeCountSpeedMultiplier++;
       timeSpeed = map(this.timeCountSpeedMultiplier, 0, 300, 0, 1);
       multiplierSpeed = AULib.wave(AULib.WAVE_BIAS, timeSpeed, 0.75);
-      println(multiplierSpeed);
-      if (multiplierSpeed > 0.99){
-       this.lightPointReleased = false;
-       this.timeCountSpeedMultiplier = 0;
+      //println(multiplierSpeed);
+
+      if (multiplierSpeed > 0.99) {
+        this.lightPointReleased = false;
+        this.timeCountSpeedMultiplier = 0;
       }
     }
     popMatrix();
+  }
+
+  boolean explode() {
+    if (this.lenghtPointMain >= 15*rectWidth) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

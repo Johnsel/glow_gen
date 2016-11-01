@@ -49,8 +49,10 @@ void ShowFrameRate() {
   fill(200);
   text(int(frameRate), 5, 16);
 
+
+  // NOT COMPATIBLE WITH XSPLIT
   //Display fps in title of canvas
-  surface.setTitle(int(frameRate) + " fps");
+  //surface.setTitle(int(frameRate) + " fps");
 }
 
 int currentSelectedTube = 0;

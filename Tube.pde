@@ -9,6 +9,9 @@ class Tube implements ExplosionEndedListener {
   private int tubeNumber;
   private int tubeModulus;
   private int tripodNumber;
+  
+  //For getting the xPosition of the lightPoint
+  private float xPosition;
 
   private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 
@@ -57,23 +60,23 @@ class Tube implements ExplosionEndedListener {
 
   /* this function will be called on each cycle */
   void update() {
-    int currentTime = millis(); // TODO: should be refactored to the main draw loop in glow_gen 
+    //int currentTime = millis(); // TODO: should be refactored to the main draw loop in glow_gen 
 
-    for (int i = 0; i < explosions.size(); i++) {
-      Explosion explosion = explosions.get(i);
+    //for (int i = 0; i < explosions.size(); i++) {
+    //  Explosion explosion = explosions.get(i);
 
-      //explosion.update(currentTime);
+    //  //explosion.update(currentTime);
 
-      int fadeToBlackSpeed = explosion.shouldTubeFadeToBlack();
+    //  int fadeToBlackSpeed = explosion.shouldTubeFadeToBlack();
 
-      if (fadeToBlackSpeed > -1) {
-        this.fadeToBlackBy(fadeToBlackSpeed);
-      }
+    //  if (fadeToBlackSpeed > -1) {
+    //    this.fadeToBlackBy(fadeToBlackSpeed);
+    //  }
 
-      //if (explosion.finished()) {
-      //  explosions.remove(i);
-      //}
-    }
+    //  //if (explosion.finished()) {
+    //  //  explosions.remove(i);
+    //  //}
+    //}
 
     for (int i = lightPoints.size()-1; i >= 0; i--) { 
       // An ArrayList doesn't know what it is storing so we have to cast the object coming out
@@ -86,6 +89,24 @@ class Tube implements ExplosionEndedListener {
       lightpoint.display();
       if (lightpoint.endTube()) {
         lightPoints.remove(i);
+      }
+      if (lightpoint.explode()) {
+        this.xPosition = lightpoint.xPosition;
+        
+        lightPoints.remove(i);
+        
+        explosionLightPoint newExplosionLightPoint  = new explosionLightPoint(this.tubeModulus, this.tripodNumber, this.xPosition);
+        explosionLightPoints.add(newExplosionLightPoint);
+      }
+    }
+
+    for (int i = explosionLightPoints.size()-1; i >= 0; i--) { 
+      // An ArrayList doesn't know what it is storing so we have to cast the object coming out
+      explosionLightPoint explosionlightpoint = explosionLightPoints.get(i);
+      explosionlightpoint.move();
+      explosionlightpoint.display();
+      if (explosionlightpoint.endExplosion()) {
+        explosionLightPoints.remove(i);
       }
     }
 
@@ -121,8 +142,8 @@ class Tube implements ExplosionEndedListener {
     popMatrix();
   }
 
-  void addLightPoint(int movementDirection, int randomSpeed, float j, float lightPointXColor, boolean lightPointReleased, int timeCountSpeedMultiplier) {
-    lightPoint newLightPoint  = new lightPoint(this.tubeModulus, this.tripodNumber, movementDirection, randomSpeed, j, lightPointXColor, lightPointReleased, timeCountSpeedMultiplier);
+  void addLightPoint(int movementDirection, int randomSpeed, float j, float lightPointXColor, boolean lightPointReleased, int timeCountSpeedMultiplier, int lenghtPointMain) {
+    lightPoint newLightPoint  = new lightPoint(this.tubeModulus, this.tripodNumber, movementDirection, randomSpeed, j, lightPointXColor, lightPointReleased, timeCountSpeedMultiplier, lenghtPointMain);
     lightPoints.add(newLightPoint);
   } 
 
