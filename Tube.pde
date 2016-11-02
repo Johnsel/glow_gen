@@ -27,7 +27,7 @@ class Tube implements ExplosionEndedListener {
     //if (this.touchLocation == TouchLocations.LEFT)
   }
 
-  void isTouched(int touchLocation /* TODO: Make an ENUM for this */) {
+  void isTouched(int touchLocation) {
     // create a new effect
     //int currentTime = millis();
     //Explosion newExplosion = new Explosion(currentTime, touchLocation, this.tubeNumber);

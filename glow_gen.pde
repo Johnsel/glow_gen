@@ -35,6 +35,12 @@ void setup() {
   defineColors(); // we can use defineColors later on to change colors (periodically or with input)
 
   drawRaster(); // drawRaster helps us with the LED mapping in ELM
+
+  //Setup MQTT
+
+  client = new MQTTClient(this);
+  client.connect("10.0.0.1");
+  //client.subscribe("/example");
 }
 
 void draw() {

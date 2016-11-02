@@ -3,7 +3,7 @@ class explosionLightPoint {
   int tubeModulus, tripodNumber, frameCountStart, yPosition;
   float xPosition, distanceExplosionRight, totalDistanceExplosionRight, time, multiplierSpeed, speedExplosion, movedDistance, distanceTubeOneExplosionRight, distanceTubeOneExplosionLeft, totalDistanceExplosionLeft, distanceExplosionLeft, durationExplosion;
 
-  float fadeAmount = 255;
+  float fadeAmount = 200;
 
   explosionLightPoint(int tubeModulus, int tripodNumber, float xPosition) {
     this.xPosition = tubeLength / 2;
@@ -95,8 +95,8 @@ class explosionLightPoint {
   }
 
   boolean endExplosion() {
-    if (multiplierSpeed > 0.7) {
-      fadeAmount = map(multiplierSpeed, 0.8, 1.0, 255, 10);
+    if (multiplierSpeed > 0.4) {
+      fadeAmount = map(multiplierSpeed, 0.4, 1.0, 200, 10);
     }
 
     if (multiplierSpeed > 0.99) {

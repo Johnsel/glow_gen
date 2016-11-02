@@ -17,7 +17,7 @@ class lightPoint {
 
     maximumLengthPointTale = rectWidth*15;
     lengthPointHead = rectWidth*5;
-    
+
     this.lenghtPointMain = lenghtPointMain;
 
     this.tubeModulus = tubeModulus;
@@ -344,7 +344,7 @@ class lightPoint {
 
         if (countGrowing == 3) {
 
-          this.lenghtPointMain += rectWidth;
+          this.lenghtPointMain += rectWidth*2;
           println(this.lenghtPointMain/rectWidth);
           countGrowing = 0;
         }
@@ -353,12 +353,22 @@ class lightPoint {
     popStyle();
 
     if (this.lightPointReleased) {
+
       this.timeCountSpeedMultiplier++;
-      timeSpeed = map(this.timeCountSpeedMultiplier, 0, 300, 0, 1);
-      multiplierSpeed = AULib.wave(AULib.WAVE_BIAS, timeSpeed, 0.75);
+
+      if (timeCountSpeedMultiplier < 550) {
+        timeSpeed = map(this.timeCountSpeedMultiplier, 0, 550, 0, 1);
+        multiplierSpeed = AULib.wave(AULib.WAVE_BIAS, timeSpeed, 0.75);
+      }
+
+      if (timeCountSpeedMultiplier > 550 && timeCountSpeedMultiplier < 800) {
+        timeSpeed = map(this.timeCountSpeedMultiplier, 550, 800, 1, 0);
+        multiplierSpeed = AULib.wave(AULib.WAVE_GAIN, timeSpeed, 0.1);
+      }
+
       //println(multiplierSpeed);
 
-      if (multiplierSpeed > 0.99) {
+      if (timeCountSpeedMultiplier > 800) {
         this.lightPointReleased = false;
         this.timeCountSpeedMultiplier = 0;
       }
