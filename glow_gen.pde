@@ -44,6 +44,8 @@ void setup() {
 }
 
 void draw() {
+  
+  checkMQTT();
   // def: (int x, int y, float w, float h, color c1, color c2, int tubeNumber, int tripodNumber)
   //setGradient(x, y, numLEDsPerTube * rectWidth, rectHeight, c2, c1, 2, 10);
 
