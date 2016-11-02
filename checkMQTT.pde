@@ -8,6 +8,7 @@ int tripodNumberReceived;
 int tubeModulusReceived;
 int tubeNumberReceived;
 int sideTouchedReceived;
+int payLoadReceived;
 
 void checkMQTT() {
   for (int i = 0; i < numTripods; i++) {
@@ -29,6 +30,8 @@ void messageReceived(String topic, byte[] payload) {
   
   String[] receivedMQTT = split(topic, '/');
   
+  payLoadReceived = int(payload[0]);
+  
   tripodNumberReceived = Integer.parseInt(receivedMQTT[1]);
   
   tubeModulusReceived = Integer.parseInt(receivedMQTT[3]);
@@ -37,7 +40,12 @@ void messageReceived(String topic, byte[] payload) {
   
   tubeNumberReceived = tripodNumberReceived*3 + tubeModulusReceived;
   
-  
+  if (payLoadReceived == 1){
   tubes[tubeNumberReceived].isTouched(sideTouchedReceived);
+  }
+  
+  if (payLoadReceived == 0){
+    tubes[tubeNumberReceived].isUnTouched(sideTouchedReceived);
+  }
   
 }

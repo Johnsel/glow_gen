@@ -44,7 +44,7 @@ class Tube implements ExplosionEndedListener {
     }
   }
 
-  void isUntouched() {
+  void isUnTouched(int touchLocation) {
     // TODO: do something more sensible here
 
     //for (int i = explosions.size() - 1; i >= 0; i--) {
