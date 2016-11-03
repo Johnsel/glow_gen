@@ -6,10 +6,10 @@ import spout.*;
 
 int numTripods = 40;
 int numTubes = numTripods * 3;
-int numLEDsPerTube = 112;
+int numLEDsPerTube = 56;
 
-int rectWidth = 5;
-int rectHeight = 5;
+int rectWidth = 9;
+int rectHeight = 9;
 int tubeLength = rectWidth * numLEDsPerTube;
 
 int x;
