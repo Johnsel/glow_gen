@@ -23,29 +23,28 @@ void checkMQTT() {
 }
 
 void messageReceived(String topic, byte[] payload) {
-  
+
   println("new message: " + topic + " - " + new String(payload));
-  
+
   //Send direct to tube with tubenumber
-  
+
   String[] receivedMQTT = split(topic, '/');
-  
-  payLoadReceived = int(payload[0]);
-  
+
   tripodNumberReceived = Integer.parseInt(receivedMQTT[1]);
-  
+
   tubeModulusReceived = Integer.parseInt(receivedMQTT[3]);
-  
+
   sideTouchedReceived = Integer.parseInt(receivedMQTT[5]);
-  
+
+  payLoadReceived = int(payload[0]);
+
   tubeNumberReceived = tripodNumberReceived*3 + tubeModulusReceived;
-  
-  if (payLoadReceived == 1){
-  tubes[tubeNumberReceived].isTouched(sideTouchedReceived);
+
+  if (payLoadReceived == 1) {
+    tubes[tubeNumberReceived].isTouched(sideTouchedReceived);
   }
-  
-  if (payLoadReceived == 0){
+
+  if (payLoadReceived == 0) {
     tubes[tubeNumberReceived].isUnTouched(sideTouchedReceived);
   }
-  
 }

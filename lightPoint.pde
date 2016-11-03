@@ -15,10 +15,10 @@ class lightPoint {
 
   lightPoint(int tubeModulus, int tripodNumber, int movementDirection, int randomSpeed, float j, float lightpointXColor, boolean lightPointReleased, int timeCountSpeedMultiplier, int lenghtPointMain) {
 
-    maximumLengthPointTale = rectWidth*15;
-    lengthPointHead = rectWidth*5;
+    maximumLengthPointTale = rectWidth*0.1;
+    lengthPointHead = rectWidth*0.1;
 
-    this.lenghtPointMain = lenghtPointMain;
+    this.lenghtPointMain = 20*rectWidth;
 
     this.tubeModulus = tubeModulus;
     this.tripodNumber = tripodNumber;
@@ -38,7 +38,7 @@ class lightPoint {
     this.j = j;
 
     //Select one of the options for color schemes of the lightpoint
-    colorVariationLightPoint = 1; //Three color schemes implemented right now
+    colorVariationLightPoint = 0; //Three color schemes implemented right now
 
     //Select a random begin for the color fading of the lightpoint to begin
     this.lightpointXColor = lightpointXColor;
@@ -58,13 +58,13 @@ class lightPoint {
 
     switch (this.randomSpeed) {
     case 0:
-      this.speedPoint = (-((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin (2*(this.j-0.584))+cos (0.8*(this.j-0.584)))-2.85)/4) + multiplierSpeed*5;
+      this.speedPoint = (-((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin (2*(this.j-0.584))+cos (0.8*(this.j-0.584)))-2.85)/2) + multiplierSpeed*5;
       break;
     case 1:
-      this.speedPoint = (((sin (2*(this.j-0.584))*sin(0.5*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(05*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/4) + multiplierSpeed*5;
+      this.speedPoint = (((sin (2*(this.j-0.584))*sin(0.5*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(05*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/2) + multiplierSpeed*5;
       break;
     case 2:
-      this.speedPoint = (((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(2*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/4) + multiplierSpeed*5;
+      this.speedPoint = (((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(2*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/2) + multiplierSpeed*5;
       break;
     }
     //this.speedPoint = (sin(3*(this.j+19.548))*cos(0.5*(this.j+19.548))+cos(0.5*(this.j+19.548))*sin(2*(this.j+19.548))+1.865)/3;
@@ -159,23 +159,23 @@ class lightPoint {
     //Movement left
     if (this.movementDirection == 1) {
       //gradient to right
-      for (float i = xPosition + (this.lenghtPointMain/2); i <= xPosition+lengthPointTale+(this.lenghtPointMain/2); i+=rectWidth) {
-        pushStyle();
-        float inter = map(i, xPosition + (this.lenghtPointMain/2), xPosition+lengthPointTale+(this.lenghtPointMain/2), 200, 0);
-        //color c = lerpColor(c2, b1, inter);
+      //for (float i = xPosition + (this.lenghtPointMain/2); i <= xPosition+lengthPointTale+(this.lenghtPointMain/2); i+=rectWidth) {
+      //  pushStyle();
+      //  float inter = map(i, xPosition + (this.lenghtPointMain/2), xPosition+lengthPointTale+(this.lenghtPointMain/2), 255, 0);
+      //  //color c = lerpColor(c2, b1, inter);
 
-        if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
-          fill(colorLightPoint, inter);
-          rect(i, yPosition, rectWidth, rectWidth);
-        }
-        popStyle();
-      }
+      //  if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
+      //    fill(colorLightPoint, inter);
+      //    rect(i, yPosition, rectWidth, rectHeight);
+      //  }
+      //  popStyle();
+      //}
 
       for (float i = xPosition - (this.lenghtPointMain/2); i < xPosition; i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint, 200);
-          rect(i, yPosition, rectWidth, rectWidth);
+          fill (colorLightPoint, 255);
+          rect(i, yPosition, rectWidth, rectHeight);
         }
         popStyle();
       }
@@ -183,45 +183,45 @@ class lightPoint {
       for (float i = xPosition; i < xPosition + (this.lenghtPointMain/2); i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint, 200);
-          rect(i, yPosition, rectWidth, rectWidth);
+          fill (colorLightPoint, 255);
+          rect(i, yPosition, rectWidth, rectHeight);
         }
         popStyle();
       }
 
       //smooth out lightpoint infront
-      for (float i = xPosition - (this.lenghtPointMain/2) - rectWidth; i >= xPosition - (this.lenghtPointMain/2) - lengthPointHead; i-=rectWidth) {
-        pushStyle();
-        float inter = map(i, xPosition - (this.lenghtPointMain/2) - rectWidth, xPosition - (this.lenghtPointMain/2) - lengthPointHead, 200, 0);
-        //color c = lerpColor(c2, b1, inter);
+      //for (float i = xPosition - (this.lenghtPointMain/2) - rectWidth; i >= xPosition - (this.lenghtPointMain/2) - lengthPointHead; i-=rectWidth) {
+      //  pushStyle();
+      //  float inter = map(i, xPosition - (this.lenghtPointMain/2) - rectWidth, xPosition - (this.lenghtPointMain/2) - lengthPointHead, 255, 0);
+      //  //color c = lerpColor(c2, b1, inter);
 
-        if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
-          fill(colorLightPoint, inter);
-          rect(i, yPosition, rectWidth, rectWidth);
-        }
-        popStyle();
-      }
+      //  if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
+      //    fill(colorLightPoint, inter);
+      //    rect(i, yPosition, rectWidth, rectHeight);
+      //  }
+      //  popStyle();
+      //}
     }
     //Movement right
     if (this.movementDirection == 0) {
-      //gradient to left
-      for (float i = xPosition - (this.lenghtPointMain/2) - rectWidth; i >= xPosition - lengthPointTale - (this.lenghtPointMain/2); i-=rectWidth) {
-        pushStyle();
-        float inter = map(i, xPosition - (this.lenghtPointMain/2) - rectWidth, xPosition - lengthPointTale - (this.lenghtPointMain/2), 200, 0);
-        //color c = lerpColor(c2, b1, inter);
+      ////gradient to left
+      //for (float i = xPosition - (this.lenghtPointMain/2) - rectWidth; i >= xPosition - lengthPointTale - (this.lenghtPointMain/2); i-=rectWidth) {
+      //  pushStyle();
+      //  float inter = map(i, xPosition - (this.lenghtPointMain/2) - rectWidth, xPosition - lengthPointTale - (this.lenghtPointMain/2), 255, 0);
+      //  //color c = lerpColor(c2, b1, inter);
 
-        if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
-          fill(colorLightPoint, inter);
-          rect(i, yPosition, rectWidth, rectWidth);
-        }
-        popStyle();
-      }
+      //  if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
+      //    fill(colorLightPoint, inter);
+      //    rect(i, yPosition, rectWidth, rectHeight);
+      //  }
+      //  popStyle();
+      //}
 
       for (float i = xPosition - (this.lenghtPointMain/2); i < xPosition; i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint, 200);
-          rect(i, yPosition, rectWidth, rectWidth);
+          fill (colorLightPoint, 255);
+          rect(i, yPosition, rectWidth, rectHeight);
         }
         popStyle();
       }
@@ -229,8 +229,8 @@ class lightPoint {
       for (float i = xPosition; i < xPosition + (this.lenghtPointMain/2); i+=rectWidth) {
         pushStyle();
         if (i >= 0 - rectWidth && i<=tubeLength) {
-          fill (colorLightPoint, 200);
-          rect(i, yPosition, rectWidth, rectWidth);
+          fill (colorLightPoint, 255);
+          rect(i, yPosition, rectWidth, rectHeight);
         }
         popStyle();
       }
@@ -245,12 +245,12 @@ class lightPoint {
       for (float i = xPosition + (this.lenghtPointMain/2); i <= xPosition+lengthPointHead+(this.lenghtPointMain/2); i+=rectWidth) {
         pushStyle();
 
-        float inter = map(i, xPosition + (this.lenghtPointMain/2), xPosition+lengthPointHead+(this.lenghtPointMain/2), 200, 0);
+        float inter = map(i, xPosition + (this.lenghtPointMain/2), xPosition+lengthPointHead+(this.lenghtPointMain/2), 255, 0);
         //color c = lerpColor(c2, b1, inter);
 
         if (i >= 0 - rectWidth && i<=tubeLength) { //keep within raster
           fill(colorLightPoint, inter);
-          rect(i, yPosition, rectWidth, rectWidth);
+          rect(i, yPosition, rectWidth, rectHeight);
         }
         popStyle();
       }
@@ -377,7 +377,7 @@ class lightPoint {
   }
 
   boolean explode() {
-    if (this.lenghtPointMain >= 15*rectWidth) {
+    if (this.lenghtPointMain >= 25*rectWidth) {
       return true;
     } else {
       return false;

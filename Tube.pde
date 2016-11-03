@@ -9,7 +9,7 @@ class Tube implements ExplosionEndedListener {
   private int tubeNumber;
   private int tubeModulus;
   private int tripodNumber;
-  
+
   //For getting the xPosition of the lightPoint
   private float xPosition;
 
@@ -40,7 +40,14 @@ class Tube implements ExplosionEndedListener {
 
     for (int i = lightPoints.size()-1; i >= 0; i--) { 
       lightPoint lightpoint = lightPoints.get(i);
-      lightpoint.lightPointGrowing = true;
+
+      if (touchLocation == 0 && lightpoint.xPosition < tubeLength / 2) {
+        lightpoint.lightPointGrowing = true;
+      }
+
+      if (touchLocation == 1 && lightpoint.xPosition > tubeLength / 2) {
+        lightpoint.lightPointGrowing = true;
+      }
     }
   }
 
@@ -53,8 +60,15 @@ class Tube implements ExplosionEndedListener {
 
     for (int i = lightPoints.size()-1; i >= 0; i--) { 
       lightPoint lightpoint = lightPoints.get(i);
-      lightpoint.lightPointGrowing = false;
-      lightpoint.lightPointReleased = true;
+      if (touchLocation == 0 && lightpoint.xPosition < tubeLength / 2) {
+        lightpoint.lightPointGrowing = false;
+        lightpoint.lightPointReleased = true;
+      }
+
+      if (touchLocation == 1 && lightpoint.xPosition > tubeLength / 2) {
+        lightpoint.lightPointGrowing = false;
+        lightpoint.lightPointReleased = true;
+      }
     }
   }
 
@@ -92,9 +106,9 @@ class Tube implements ExplosionEndedListener {
       }
       if (lightpoint.explode()) {
         this.xPosition = lightpoint.xPosition;
-        
+
         lightPoints.remove(i);
-        
+
         explosionLightPoint newExplosionLightPoint  = new explosionLightPoint(this.tubeModulus, this.tripodNumber, this.xPosition);
         explosionLightPoints.add(newExplosionLightPoint);
       }
