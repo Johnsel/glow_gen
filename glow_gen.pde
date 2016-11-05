@@ -1,5 +1,5 @@
 import AULib.*;
-
+import spout.*;
 /*
  *
  */
@@ -21,11 +21,15 @@ int selectedTube, tubeNumber;
 
 Tube[] tubes = new Tube[numTubes];
 
+Spout spout;
+
 void setup() {
-  size(1600, 880, FX2D);
-  frameRate(60);
+  size(1600, 880, P2D);
+  frameRate(40);
   background(0);
   noStroke();
+  smooth();
+  colorMode(RGB);
   font = createFont("Arial Bold", 48);
 
   for (int i=0; i< numTubes; i++) {
@@ -34,23 +38,27 @@ void setup() {
 
   defineColors(); // we can use defineColors later on to change colors (periodically or with input)
 
-  drawRaster(); // drawRaster helps us with the LED mapping in ELM
+  //drawRaster(); // drawRaster helps us with the LED mapping in ELM
 
   //Setup MQTT
 
   client = new MQTTClient(this);
   client.connect("10.0.0.1");
   //client.subscribe("/example");
+
+  spout = new Spout(this);
 }
 
 void draw() {
-  
-  checkMQTT();
+
+  //checkMQTT();
+
   // def: (int x, int y, float w, float h, color c1, color c2, int tubeNumber, int tripodNumber)
   //setGradient(x, y, numLEDsPerTube * rectWidth, rectHeight, c2, c1, 2, 10);
 
   //Background
-  lightUpCompleteConstruction();
+  background(0);
+  //lightUpCompleteConstruction();
 
   for (int i=0; i<numTubes; i++) {
     tubes[i].update();
@@ -60,7 +68,9 @@ void draw() {
 
   selectingSystem();
 
-  drawRaster();
+  //drawRaster();
+
+  spout.sendTexture();
 
   /* the idea is that something in the draw function creates a rectangle coming in from the left, or right. So with movement
    the setGradient feature is made to give an idea how this can be done for each tube.
@@ -120,8 +130,22 @@ void keyPressed() {
 
   if (key == '2') {
     selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
+    tubes[selectedTube].isTouched(0);
+  }
+
+  if (key == '3') {
+    selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
     tubes[selectedTube].isTouched(1);
   }
+
+  if (key == '0') {
+    for (int i=0; i<120; i++) {
+      
+      tubes[i].isTouched(1);
+      tubes[i].isTouched(0);
+    }
+  }
+ 
 }
 
 void keyReleased() {
@@ -137,7 +161,14 @@ void keyReleased() {
 
   if (key == '2') {
     selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
-    tubes[selectedTube].isUntouched();
+    tubes[selectedTube].isUnTouched(0);
+    println("key2released");
+  }
+
+  if (key == '3') {
+    selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
+    tubes[selectedTube].isUnTouched(1);
+    println("key3released");
   }
 }
 

@@ -9,13 +9,19 @@ class Tube implements ExplosionEndedListener {
   private int tubeNumber;
   private int tubeModulus;
   private int tripodNumber;
-  
+
   //For getting the xPosition of the lightPoint
   private float xPosition;
+
+  private boolean effectRunningTouchLocation0 = false;
+  private boolean effectRunningTouchLocation1 = false;
+
 
   private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 
   private ArrayList<lightPoint> lightPoints = new ArrayList<lightPoint>();
+
+  private ArrayList<createNewLightPoint> createNewLightPoints = new ArrayList<createNewLightPoint>();
 
   private ArrayList<explosionLightPoint> explosionLightPoints = new ArrayList<explosionLightPoint>();
 
@@ -35,12 +41,32 @@ class Tube implements ExplosionEndedListener {
     //explosions.add(newExplosion);
     //newExplosion.update(currentTime);
 
-
     //println("new explosion started, new size: " + explosions.size());
 
     for (int i = lightPoints.size()-1; i >= 0; i--) { 
       lightPoint lightpoint = lightPoints.get(i);
-      lightpoint.lightPointGrowing = true;
+
+      if (touchLocation == 0 && lightpoint.xPosition < tubeLength / 2 && effectRunningTouchLocation0 == false) {
+        lightpoint.lightPointGrowing = true;
+        effectRunningTouchLocation0 = true;
+      }
+
+      if (touchLocation == 1 && lightpoint.xPosition > tubeLength / 2 && effectRunningTouchLocation1 == false) {
+        lightpoint.lightPointGrowing = true;
+        effectRunningTouchLocation1 = true;
+      }
+    }
+
+    if (touchLocation == 0 && effectRunningTouchLocation0 == false) {
+      createNewLightPoint newcreateNewLightPoint  = new createNewLightPoint(this.tubeModulus, this.tripodNumber, 0);
+      createNewLightPoints.add(newcreateNewLightPoint);
+      effectRunningTouchLocation0 = true;
+    }
+
+    if (touchLocation == 1 && effectRunningTouchLocation1 == false) {
+      createNewLightPoint newcreateNewLightPoint  = new createNewLightPoint(this.tubeModulus, this.tripodNumber, 1);
+      createNewLightPoints.add(newcreateNewLightPoint);
+      effectRunningTouchLocation1 = true;
     }
   }
 
@@ -51,11 +77,54 @@ class Tube implements ExplosionEndedListener {
     //  explosions.remove(i);
     //}
 
+    //println(touchLocation);
+
     for (int i = lightPoints.size()-1; i >= 0; i--) { 
       lightPoint lightpoint = lightPoints.get(i);
-      lightpoint.lightPointGrowing = false;
-      lightpoint.lightPointReleased = true;
+      if (touchLocation == 0 && lightpoint.xPosition < tubeLength / 2 && effectRunningTouchLocation0) {
+        lightpoint.lightPointGrowing = false;
+        lightpoint.lightPointReleased = true;
+
+        effectRunningTouchLocation0 = false;
+      }
+
+      if (touchLocation == 1 && lightpoint.xPosition > tubeLength / 2 && effectRunningTouchLocation1) {
+        lightpoint.lightPointGrowing = false;
+        lightpoint.lightPointReleased = true;
+
+        effectRunningTouchLocation1 = false;
+      }
     }
+
+
+    for (int i = createNewLightPoints.size()-1; i >= 0; i--) { 
+      // An ArrayList doesn't know what it is storing so we have to cast the object coming out
+      createNewLightPoint createnewlightpoints = createNewLightPoints.get(i);
+      if (createnewlightpoints.touchLocation == touchLocation) {
+        createNewLightPoints.remove(i);
+
+
+
+        if (touchLocation == 0) {
+          effectRunningTouchLocation0 = false;
+          lightPoint newLightPoint  = new lightPoint(this.tubeModulus, this.tripodNumber, 0, int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0, 1);
+          lightPoints.add(newLightPoint);
+        }
+        if (touchLocation == 1) {
+          effectRunningTouchLocation1 = false;
+          lightPoint newLightPoint  = new lightPoint(this.tubeModulus, this.tripodNumber, 1, int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0, 1);
+          lightPoints.add(newLightPoint);
+        }
+      }
+    }
+
+    //for (int i = createNewLightPoints.size()-1; i >= 0; i--) { 
+    //  // An ArrayList doesn't know what it is storing so we have to cast the object coming out
+    //  createNewLightPoint createnewlightpoints = createNewLightPoints.get(i);
+    //  if (createnewlightpoints.touchLocation == 1) {
+    //    createNewLightPoints.remove(i);
+    //  }
+    //}
   }
 
   /* this function will be called on each cycle */
@@ -92,9 +161,9 @@ class Tube implements ExplosionEndedListener {
       }
       if (lightpoint.explode()) {
         this.xPosition = lightpoint.xPosition;
-        
+
         lightPoints.remove(i);
-        
+
         explosionLightPoint newExplosionLightPoint  = new explosionLightPoint(this.tubeModulus, this.tripodNumber, this.xPosition);
         explosionLightPoints.add(newExplosionLightPoint);
       }
@@ -108,6 +177,13 @@ class Tube implements ExplosionEndedListener {
       if (explosionlightpoint.endExplosion()) {
         explosionLightPoints.remove(i);
       }
+    }
+
+    for (int i = createNewLightPoints.size()-1; i >= 0; i--) { 
+      // An ArrayList doesn't know what it is storing so we have to cast the object coming out
+      createNewLightPoint createnewlightpoints = createNewLightPoints.get(i);
+      createnewlightpoints.move();
+      createnewlightpoints.display();
     }
 
     /*

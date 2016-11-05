@@ -4,6 +4,8 @@ class explosionLightPoint {
   float xPosition, distanceExplosionRight, totalDistanceExplosionRight, time, multiplierSpeed, speedExplosion, movedDistance, distanceTubeOneExplosionRight, distanceTubeOneExplosionLeft, totalDistanceExplosionLeft, distanceExplosionLeft, durationExplosion;
 
   float fadeAmount = 200;
+  
+  //colorVariationConstruction = 1;
 
   explosionLightPoint(int tubeModulus, int tripodNumber, float xPosition) {
     this.xPosition = tubeLength / 2;
@@ -22,6 +24,8 @@ class explosionLightPoint {
     frameCountStart = frameCount;
 
     durationExplosion = 60*1.5;
+    
+    //colorVariationConstruction = 0;
   }
 
   void move() {      
@@ -40,6 +44,8 @@ class explosionLightPoint {
   }
 
   void display() {
+    
+    
 
     pushMatrix();
     translate(this.tubeModulus * (numLEDsPerTube * rectWidth) + (this.tubeModulus * 20 + 20), this.tripodNumber * 21 + 21); // this can be used to shift the matrix to draw for each tube using tubeModulus and tripodNumber
@@ -48,10 +54,10 @@ class explosionLightPoint {
     //println(this.xPosition + " , " + distanceExplosionRight);
 
     // + rectWidth for fixing the overlapping rectangle in the middle of the explosion
-    for (float i = this.xPosition + rectWidth; i <= distanceExplosionRight + this.xPosition; i+=rectWidth) {
+    for (float i = this.xPosition + rectWidth; i <= distanceExplosionRight + this.xPosition; i+=1) {
       pushStyle();      
       fill(255, fadeAmount);
-      rect(i, yPosition, rectWidth, rectWidth);
+      rect(i, yPosition, 1, rectWidth);
       popStyle();
       if ( i >= distanceTubeOneExplosionRight + this.xPosition) {
         break;
@@ -60,20 +66,20 @@ class explosionLightPoint {
 
     if (tripodNumber < 39) {
       if (distanceExplosionRight > distanceTubeOneExplosionRight) {
-        for (float i = 0; i <= distanceExplosionRight - distanceTubeOneExplosionRight; i+=rectWidth) {
+        for (float i = 0; i <= distanceExplosionRight - distanceTubeOneExplosionRight; i+=1) {
           pushStyle();      
           fill(255, fadeAmount);      
-          rect(i, yPosition + 21, rectWidth, rectWidth);
+          rect(i, yPosition + 21, 1, rectWidth);
           popStyle();
         }
       }
     }
 
     //explosion to left
-    for (float i = this.xPosition; i >= this.xPosition - distanceExplosionLeft; i-=rectWidth) {
+    for (float i = this.xPosition; i >= this.xPosition - distanceExplosionLeft; i-=1) {
       pushStyle();      
       fill(255, fadeAmount);
-      rect(i, yPosition, rectWidth, rectWidth);
+      rect(i, yPosition, 1, rectWidth);
       popStyle();
       if ( i <= 0) {
         break;
@@ -82,10 +88,10 @@ class explosionLightPoint {
 
     if (tripodNumber > 0) {
       if (distanceExplosionLeft >= distanceTubeOneExplosionLeft) {
-        for (float i = tubeLength; i > (tubeLength - (distanceExplosionLeft - this.xPosition)); i-=rectWidth) {
+        for (float i = tubeLength; i > (tubeLength - (distanceExplosionLeft - this.xPosition)); i-=1) {
           pushStyle();      
           fill(255, fadeAmount);      
-          rect(i, yPosition - 21, rectWidth, rectWidth);
+          rect(i, yPosition - 21, 1, rectWidth);
           popStyle();
         }
       }
