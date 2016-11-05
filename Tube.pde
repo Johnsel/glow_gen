@@ -227,4 +227,12 @@ class Tube implements ExplosionEndedListener {
     explosionLightPoint newExplosionLightPoint  = new explosionLightPoint(this.tubeModulus, this.tripodNumber, xPosition);
     explosionLightPoints.add(newExplosionLightPoint);
   }
+
+  void removeAllLightPoints() {
+    for (int i = lightPoints.size()-1; i >= 0; i--) { 
+      // An ArrayList doesn't know what it is storing so we have to cast the object coming out
+      lightPoint lightpoint = lightPoints.get(i);
+      lightPoints.remove(i);
+    }
+  }
 }

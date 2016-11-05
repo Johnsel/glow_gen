@@ -24,8 +24,8 @@ Tube[] tubes = new Tube[numTubes];
 Spout spout;
 
 void setup() {
-  size(1600, 880, P2D);
-  frameRate(40);
+  size(500, 880, P2D);
+  frameRate(45);
   background(0);
   noStroke();
   smooth();
@@ -43,13 +43,25 @@ void setup() {
   //Setup MQTT
 
   client = new MQTTClient(this);
-  client.connect("10.0.0.1");
+  client.connect("mqtt://10.0.0.1", "processing");
+  client.subscribe("tripods/" + 0 + "/tube/" + 0 + "/side/" + 0);
   //client.subscribe("/example");
+
+  for (int i = 0; i < numTripods; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (int k = 0; k < 2; k++) {
+        //println(
+        client.subscribe("tripods/" + i + "/tube/" + j + "/side/" + k);
+      }
+    }
+  }
 
   spout = new Spout(this);
 }
 
 void draw() {
+  
+  //scale(0.2);
 
   //checkMQTT();
 
@@ -138,14 +150,20 @@ void keyPressed() {
     tubes[selectedTube].isTouched(1);
   }
 
+  if (key == '9') {
+    for (int i=0; i<120; i++) {
+
+      tubes[i].removeAllLightPoints();
+    }
+  }
+
   if (key == '0') {
     for (int i=0; i<120; i++) {
-      
+
       tubes[i].isTouched(1);
       tubes[i].isTouched(0);
     }
   }
- 
 }
 
 void keyReleased() {
