@@ -24,7 +24,7 @@ Tube[] tubes = new Tube[numTubes];
 Spout spout;
 
 void setup() {
-  size(500, 880, P2D);
+  size(1600, 880, P2D);
   frameRate(45);
   background(0);
   noStroke();
@@ -42,25 +42,24 @@ void setup() {
 
   //Setup MQTT
 
-  client = new MQTTClient(this);
-  client.connect("mqtt://10.0.0.1", "processing");
-  client.subscribe("tripods/" + 0 + "/tube/" + 0 + "/side/" + 0);
-  //client.subscribe("/example");
+  //client = new MQTTClient(this);
+  //client.connect("mqtt://10.0.0.1", "processing");
+  ////client.subscribe("tripods/" + 0 + "/tube/" + 0 + "/side/" + 0);
 
-  for (int i = 0; i < numTripods; i++) {
-    for (int j = 0; j < 3; j++) {
-      for (int k = 0; k < 2; k++) {
-        //println(
-        client.subscribe("tripods/" + i + "/tube/" + j + "/side/" + k);
-      }
-    }
-  }
+  //for (int i = 0; i < numTripods; i++) {
+  //  for (int j = 0; j < 3; j++) {
+  //    for (int k = 0; k < 2; k++) {
+  //      //println(
+  //      client.subscribe("tripods/" + i + "/tube/" + j + "/side/" + k);
+  //    }
+  //  }
+  //}
 
   spout = new Spout(this);
 }
 
 void draw() {
-  
+
   //scale(0.2);
 
   //checkMQTT();
@@ -126,18 +125,18 @@ void keyPressed() {
 
   if (key == ENTER) {
     selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
-    tubes[selectedTube].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0, 2*rectWidth);
+    tubes[selectedTube].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0, 1);
     println("added lightpoint at " + selectedTube);
   }
   if (key == BACKSPACE) {
     for (int i=0; i<30; i++) {
       int tubeRandom = int(random(0, 119));
-      tubes[tubeRandom].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0, 2*rectWidth);
+      tubes[tubeRandom].addLightPoint(int(random(0, 1.99)), int(random(0, 2.99)), random(0, 62), random(0, 4), false, 0, 1);
     }
   }
   if (key == '1') {
     selectedTube = (currentSelectedTripod*3)+currentSelectedTube;
-    tubes[selectedTube].addExplosionLightPoint(100);
+    tubes[selectedTube].addExplosionLightPoint(tubeLength/2);
   }
 
   if (key == '2') {
@@ -215,4 +214,9 @@ void moveLightPointNextTripod(int tubeModulus, int tripodNumber, int movementDir
 
   tubes[tubeNumber].addLightPoint(movementDirection, randomSpeed, j, lightPointXColor, lightPointReleased, timeCountSpeedMultiplier, lenghtPointMain);
   //println("added lightpoint at " + this.tubeNumber + " with " + this.tubeModulus + " and " + this.tripodNumber);
+}
+
+void createLightPoint(int tubeModulus, int tripodNumber, int movementDirection, float lightPointXColor) {
+  tubeNumber = (tripodNumber*3)+tubeModulus;
+  tubes[tubeNumber].addLightPoint(movementDirection, int(random(0, 2.99)), random(0, 62), lightPointXColor, false, 0, 1);
 }

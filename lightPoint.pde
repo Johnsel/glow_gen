@@ -10,7 +10,7 @@ class lightPoint {
 
   color colorLightPoint;
 
-  int timeCount, timeCountSpeedMultiplier;
+  int timeCount, timeCountSpeedMultiplier, lenghtGrowingAnimation;
   float time, multiplierSpeed, totalDistanceGrowingRight, distanceGrowingLeft, distanceGrowingRight, timeSpeed;
 
   lightPoint(int tubeModulus, int tripodNumber, int movementDirection, int randomSpeed, float j, float lightpointXColor, boolean lightPointReleased, int timeCountSpeedMultiplier, int lenghtPointMain) {
@@ -30,7 +30,7 @@ class lightPoint {
     if (this.movementDirection == 0) {
       xPosition = 0 - this.lenghtPointMain/2;
     }
-    
+
     if (this.movementDirection == 1) {
       xPosition = tubeLength + lengthPointHead + this.lenghtPointMain;
     }
@@ -48,7 +48,9 @@ class lightPoint {
 
     this.timeCountSpeedMultiplier = timeCountSpeedMultiplier;
 
-    println("new point generated, at " + this.tubeModulus + "," + this.tripodNumber + " with color variation " + colorVariationLightPoint);
+    lenghtGrowingAnimation = int(random(15, 45));
+
+    println("new point generated, at " + this.tubeModulus + "," + this.tripodNumber + " with color variation " + colorVariationLightPoint + " state of released " + this.lightPointReleased);
   }
 
   void move() {
@@ -59,13 +61,13 @@ class lightPoint {
 
     switch (this.randomSpeed) {
     case 0:
-      this.speedPoint = (-((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin (2*(this.j-0.584))+cos (0.8*(this.j-0.584)))-2.85)/2) + multiplierSpeed*5;
+      this.speedPoint = (-((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin (2*(this.j-0.584))+cos (0.8*(this.j-0.584)))-2.85)/3) + multiplierSpeed*8;
       break;
     case 1:
-      this.speedPoint = (((sin (2*(this.j-0.584))*sin(0.5*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(05*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/2) + multiplierSpeed*5;
+      this.speedPoint = (((sin (2*(this.j-0.584))*sin(0.5*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(05*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/3) + multiplierSpeed*8;
       break;
     case 2:
-      this.speedPoint = (((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(2*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/2) + multiplierSpeed*5;
+      this.speedPoint = (((sin(3*(this.j-0.584))*cos(0.8*(this.j-0.584))+cos(0.5*(this.j-0.584))*sin(2*(this.j-0.584))+cos(0.8*(this.j-0.584)))+2.85)/3) + multiplierSpeed*8;
       break;
     }
     //this.speedPoint = (sin(3*(this.j+19.548))*cos(0.5*(this.j+19.548))+cos(0.5*(this.j+19.548))*sin(2*(this.j+19.548))+1.865)/3;
@@ -120,9 +122,10 @@ class lightPoint {
     //Calculate length of tale point with regards to the speed of point
     //1.243 maximum of sinus function
     if (lightPointGrowing) {
-      lengthPointTale = map(multiplierGrow, 0, 1.243, rectWidth*10, rectWidth*23);
+      lengthPointTale = map(multiplierGrow, 0, 1.243, rectWidth*2, maximumLengthPointTale);
       //lengthPointHead = map(multiplierGrow, 0, 1.243, rectWidth*5, rectWidth*9);
     } else {
+      
       lengthPointTale = map(this.speedPoint, 0, 1.243, rectWidth*2, maximumLengthPointTale);
       //lengthPointHead = map(this.speedPoint, 1.243, 0, rectWidth*5, rectWidth*9);
     }
@@ -275,9 +278,9 @@ class lightPoint {
 
       if (this.speedPoint != 0) {
         if (this.speedPoint > 0) {
-          this.speedPoint -= 0.05;
+          this.speedPoint -= 0.04;
         } else {
-          this.speedPoint += 0.02;
+          this.speedPoint += 0.04;
         }
       } else {
 
@@ -317,11 +320,7 @@ class lightPoint {
 
       timeCount ++;
 
-      if (timeCount > 30) {
-        timeCount = 0;
-      }
-
-      time = map(timeCount, 0, 30, 0, 1);
+      time = map(timeCount, 0, lenghtGrowingAnimation, 0, 1);
 
       speedGrowing = AULib.wave(AULib.WAVE_BIAS, time, 0.7);
 
@@ -340,15 +339,14 @@ class lightPoint {
       }
 
 
-      if (speedGrowing >= 0.98) {
-        countGrowing++;
+      if (timeCount >= lenghtGrowingAnimation) {
+        //countGrowing++;
+        timeCount = 0;
 
-        if (countGrowing == 1) {
+        this.lenghtPointMain += 2;
 
-          this.lenghtPointMain += 1;
-          println(this.lenghtPointMain/rectWidth);
-          countGrowing = 0;
-        }
+        println(this.lenghtPointMain);
+        lenghtGrowingAnimation = int(random(10, 30));
       }
     }
     popStyle();
@@ -357,28 +355,36 @@ class lightPoint {
 
       this.timeCountSpeedMultiplier++;
 
-      if (timeCountSpeedMultiplier < 550) {
-        timeSpeed = map(this.timeCountSpeedMultiplier, 0, 550, 0, 1);
-        multiplierSpeed = AULib.wave(AULib.WAVE_BIAS, timeSpeed, 0.75);
+      if (this.timeCountSpeedMultiplier < 60) {
+        timeSpeed = map(this.timeCountSpeedMultiplier, 0, 60, 0, 1);
+        multiplierSpeed = AULib.wave(AULib.WAVE_BIAS, timeSpeed, 0.8);
+        //println("running," + this.timeCountSpeedMultiplier);
       }
 
-      if (timeCountSpeedMultiplier > 550 && timeCountSpeedMultiplier < 800) {
-        timeSpeed = map(this.timeCountSpeedMultiplier, 550, 800, 1, 0);
+      if (this.timeCountSpeedMultiplier > 60 && this.timeCountSpeedMultiplier < 200) {
+        multiplierSpeed = 1;
+      }
+
+      if (this.timeCountSpeedMultiplier > 200 && this.timeCountSpeedMultiplier < 320) {
+        timeSpeed = map(this.timeCountSpeedMultiplier, 200, 320, 1, 0);
         multiplierSpeed = AULib.wave(AULib.WAVE_GAIN, timeSpeed, 0.1);
+        //println("running1,"  + this.timeCountSpeedMultiplier);
+        //println(multiplierSpeed);
       }
 
       //println(multiplierSpeed);
 
-      if (timeCountSpeedMultiplier > 800) {
+      if (this.timeCountSpeedMultiplier > 320) {
         this.lightPointReleased = false;
         this.timeCountSpeedMultiplier = 0;
+        //println("running2,"  + this.timeCountSpeedMultiplier);
       }
     }
     popMatrix();
   }
 
   boolean explode() {
-    if (this.lenghtPointMain >= 10*rectWidth) {
+    if (this.lenghtPointMain >= 75) {
       return true;
     } else {
       return false;

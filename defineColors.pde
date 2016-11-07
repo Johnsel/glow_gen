@@ -15,13 +15,15 @@ void defineColors() {
   //Color Scheme for lightPoint
   //1st color lightpoint
   e1 = color(255,0,0); //#FF4040
-  e2 = color(56,250,122); //#38FA7A
-  e3 = color(255,255,121);
+  e2 = color(83,250,58);
+  //e2 = color(56,250,122); //#38FA7A
+  e3 = color(255,68,0);
   
   //2nd color lightpoint
   e1_1 = color(255,183,0); //#F5C1A1
-  e2_1 = color(93,191,255); //#5DBFFF
-  e3_1 = color(255,121,121);
+  e2_1 = color(95,139,255);
+  //e2_1 = color(93,191,255); //#5DBFFF
+  e3_1 = color(33,135,255);
   
   
   

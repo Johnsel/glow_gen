@@ -5,11 +5,22 @@ class createNewLightPoint {
   int tubeModulus, tripodNumber, touchLocation, randomAnimationSpeed, endLocationFade, distanceFadeInTube;
   float maxDistanceInTube, j, interimEndLocationFade, maxFadeDistanceInTube, minFadeDistanceInTube;
 
-  int durationFadeIn, livingTime;
-  
+  int durationFadeIn, durationFadeOut, livingTime;
+
   int colorVariationLightPoint;
   float lightpointXColor, noiseColor;
   color colorLightPoint;
+
+
+  boolean fadeOut = false;
+  float timeInterim, interimDistanceFadeInTube;
+
+  float time = 1;
+
+  float distanceFadeInTubeStart;
+  int startFadeOutFrameCount;
+  boolean getStartValues = true;
+
 
   createNewLightPoint(int tubeModulus, int tripodNumber, int touchLocation) {
     this.tubeModulus = tubeModulus;
@@ -18,7 +29,7 @@ class createNewLightPoint {
     this.touchLocation = touchLocation;
 
     maxFadeDistanceInTube = 250;
-    minFadeDistanceInTube = 10;
+    minFadeDistanceInTube = 30;
 
     //maxFadeDistanceInTubeTouch1 = tubeLength - (tubeLength / 2);
     //maxFadeDistanceInTubeTouch0 = tubeLength / 2;
@@ -27,8 +38,10 @@ class createNewLightPoint {
 
     //Defined in frames
     durationFadeIn = 30;
-    
+
     colorVariationLightPoint = 1;
+
+    durationFadeOut = 40;
 
     println(touchLocation);
   }
@@ -62,24 +75,27 @@ class createNewLightPoint {
 
 
   void display() {
-    
-    this.lightpointXColor += 0.01;
 
-    noiseColor = ((sin(this.lightpointXColor)*cos(6*this.lightpointXColor)+cos(6*this.lightpointXColor)*sin(this.lightpointXColor))/4)+0.5;
+    if (fadeOut == false) {
 
-    //For looping the animation of color
-    if (this.lightpointXColor > ((5*PI)/2)) {
-      this.lightpointXColor = -1;
-    }
+      this.lightpointXColor += 0.01;
 
-    if (colorVariationLightPoint == 0) {
-      colorLightPoint = lerpColor(e1, e1_1, noiseColor);
-    }
-    if (colorVariationLightPoint == 1) {
-      colorLightPoint = lerpColor(e2, e2_1, noiseColor);
-    }
-    if (colorVariationLightPoint == 2) {
-      colorLightPoint = lerpColor(e3, e3_1, noiseColor);
+      noiseColor = ((sin(this.lightpointXColor)*cos(6*this.lightpointXColor)+cos(6*this.lightpointXColor)*sin(this.lightpointXColor))/4)+0.5;
+
+      //For looping the animation of color
+      if (this.lightpointXColor > ((5*PI)/2)) {
+        this.lightpointXColor = -1;
+      }
+
+      if (colorVariationLightPoint == 0) {
+        colorLightPoint = lerpColor(e1, e1_1, noiseColor);
+      }
+      if (colorVariationLightPoint == 1) {
+        colorLightPoint = lerpColor(e2, e2_1, noiseColor);
+      }
+      if (colorVariationLightPoint == 2) {
+        colorLightPoint = lerpColor(e3, e3_1, noiseColor);
+      }
     }
 
     pushMatrix();
@@ -108,16 +124,30 @@ class createNewLightPoint {
         popStyle();
       }
     }
-
-
-
-    if (touchLocation == 0) {
-    }
-
-    if (maxDistanceInTube < tubeLength/2) {
-    }
-
-
     popMatrix();
+  }
+
+  void fadeOut() {
+
+    if (getStartValues) {
+      distanceFadeInTubeStart = distanceFadeInTube;
+      startFadeOutFrameCount = frameCount;
+      getStartValues = false;
+    }
+
+    time = map(frameCount, startFadeOutFrameCount, startFadeOutFrameCount + durationFadeOut, 1, 0);
+
+    interimDistanceFadeInTube = AULib.wave(AULib.WAVE_BIAS, time, 0.7);
+    //multiplierSpeed = AULib.ease(AULib.EASE_OUT_BACK, time);
+
+    distanceFadeInTube = int(map(interimDistanceFadeInTube, 1, 0, distanceFadeInTubeStart, 0));
+  }
+
+  boolean fadeOutDone() {
+    if (time < 0.1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
